@@ -160,6 +160,10 @@ export const App: React.FunctionComponent<{
         </Container>
       </main>
       <Route path="/new" render={() => <NewTask {...props} />} />
+      <Route
+          path="/tasks/:taskID/edit"
+          render={() => <EditTask {...props} />}
+      />
     </div>
   );
 };

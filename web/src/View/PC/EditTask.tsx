@@ -10,69 +10,58 @@ import {
   useHistory,
   useLocation,
 } from "react-router-dom";
+import { EditTask as EditTaskInner } from "../SP/EditTask";
+import Modal from "@material-ui/core/Modal";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: 300,
+    flexGrow: 1,
+    minWidth: 300,
+    transform: "translateZ(0)",
+    // The position fixed scoping doesn't work in IE 11.
+    // Disable this demo to preserve the others.
+    "@media all and (-ms-high-contrast: none)": {
+      display: "none",
+    },
+  },
+  modal: {
+    display: "flex",
+    padding: theme.spacing(1),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  paper: {
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: "2px solid #000",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+}));
 
 export const EditTask: React.FunctionComponent<{
   state: PageState;
   observer: Observer<Event>;
 }> = (props) => {
-  const state = props.state;
-
-  const { taskID } = useParams<{ taskID: string }>();
-
-  useEffect(() => {
-    props.observer.next({
-      type: "detail / fetch",
-      taskID: taskID,
-    });
-  }, []);
-
-  const editTask = state.editTask;
-
-  if (!editTask) return <div>loading</div>;
-  if (editTask.id != taskID) return <div>loading</div>;
-  if (editTask.loading) return <div>loading</div>;
-
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    props.observer.next({
-      type: "detail / save",
-    });
-  }
-
-  function onTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    props.observer.next({
-      type: "detail / edit title",
-      title: e.target.value,
-    });
-  }
-
-  function onBodyChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    props.observer.next({
-      type: "detail / edit body",
-      body: e.target.value,
-    });
-  }
+  const classes = useStyles();
+  const history = useHistory();
 
   return (
-    <div style={{ border: "solid 1px black" }}>
-      詳細
-      <form onSubmit={onSubmit}>
-        <div>
-          <input
-            type="text"
-            value={editTask.next.title}
-            onChange={onTitleChange}
-            required
-          />
-        </div>
-        <div>
-          <textarea value={editTask.next.body} onChange={onBodyChange} />
-        </div>
-        <p>
-          <cite>{editTask.next.nickname}</cite>
-        </p>
-        <button>登録</button>
-      </form>
-    </div>
+    <Modal
+      disablePortal
+      disableEnforceFocus
+      disableAutoFocus
+      open
+      aria-labelledby="server-modal-title"
+      aria-describedby="server-modal-description"
+      className={classes.modal}
+      onClose={() => history.push("/")}
+    >
+      <div className={classes.paper}>
+        <EditTaskInner {...props} />
+      </div>
+    </Modal>
   );
 };
