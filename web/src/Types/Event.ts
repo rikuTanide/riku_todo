@@ -1,4 +1,4 @@
-import { ProgressStatus, TrashStatus } from "./Rest";
+import { ProgressStatus, Task, TrashStatus } from "./Rest";
 
 export type Event =
   | { type: "new task / open" }
@@ -15,7 +15,7 @@ export type Event =
   | { type: "list / continue"; taskID: string }
   | { type: "list / trash"; taskID: string }
   | { type: "list / restore"; taskID: string }
-  | { type: "on websocket message" }
+  | { type: "toast / redo-undo";  }
   | { type: "do update tasks" };
 
 export type LoginPageEvent =

@@ -8,7 +8,7 @@ export type CurrentTimeService = () => Date;
 export interface StorageService {
   getNewTask(): [string, string];
   putNewTask(title: string, body: string): void;
-  getPrevTasksResponse(): string;
+  getPrevTasksResponse(): string | null;
   putCurrentTasksResponse(json: string): void;
 }
 
@@ -16,7 +16,7 @@ export interface HttpService {
   message(): void;
 
   getTaskSummaries(): Promise<TaskSummary[] | null>;
-  getTask(id: string): Promise<TaskSummary | null>;
+  getTask(id: string): Promise<Task | null>;
   postTask(task: PostTask): Promise<boolean>;
   putTask(task: Task): Promise<boolean>;
 }

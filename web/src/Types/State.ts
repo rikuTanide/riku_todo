@@ -11,15 +11,22 @@ export interface PageState {
 export interface NewTask {
   title: string;
   body: string;
+  submitting: boolean;
 }
 
 export interface EditTask {
   id: string;
   original: Task;
   next: Task;
+  loading: boolean;
 }
 
-export type Toast = Event;
+export type Toast =
+  | { type: "new task submit error" }
+  | { type: "update task submit error" }
+  | { type: "fetch detail error" }
+  | { type: "edit undo"; task: Task }
+  | { type: "edit redo"; task: Task };
 
 export type LoginPageType = "login" | "sign up";
 

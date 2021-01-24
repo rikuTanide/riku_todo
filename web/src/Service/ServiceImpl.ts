@@ -10,9 +10,9 @@ export class StorageServiceImple implements StorageService {
     return [s.getItem("title") || "", s.getItem("body") || ""];
   }
 
-  getPrevTasksResponse(): string {
+  getPrevTasksResponse(): string | null {
     const s = window.localStorage;
-    return s.getItem("task-response") || "";
+    return s.getItem("task-response") || null;
   }
 
   putCurrentTasksResponse(json: string): void {
