@@ -8,7 +8,101 @@ import {
 import { TaskSummary } from "../Types/Model";
 import * as RestType from "../Types/Rest";
 import { Task } from "../Types/Rest";
-import { Observer } from "rxjs";
+import { BehaviorSubject, Observable, Observer, Subject } from "rxjs";
+
+function setUp(
+  storageService: StorageService,
+  httpService: HttpService,
+  currentTimeService: CurrentTimeService,
+
+  userID: string,
+  nickname: string
+): [PageState, Observable<PageState>, Observable<Event>] {
+  const defaultState: PageState = {
+    taskSummaries: [],
+    newTask: {
+      title: "",
+      body: "",
+      submitting: false,
+    },
+  };
+  const stateSubject = new BehaviorSubject<PageState>(defaultState);
+  const eventSubject = new Subject<Event>();
+
+  const handler = (event: Event) => {
+    openNewTaskPage(stateSubject.value, event, stateSubject, storageService);
+    onTitleInput(stateSubject.value, event, stateSubject, storageService);
+    onBodyInput(stateSubject.value, event, stateSubject, storageService);
+    onNewTaskSubmit(
+      stateSubject.value,
+      event,
+      stateSubject,
+      storageService,
+      httpService,
+      currentTimeService,
+      userID,
+      nickname
+    );
+    onDetailFetch(stateSubject.value, event, stateSubject, httpService);
+    onEditTitle(stateSubject.value, event, stateSubject);
+    onEditBody(stateSubject.value, event, stateSubject);
+    onEditProgress(stateSubject.value, event, stateSubject);
+    onEditTrash(stateSubject.value, event, stateSubject);
+    onEditSave(
+      stateSubject.value,
+      event,
+      stateSubject,
+      httpService,
+      storageService
+    );
+    onListTaskComplete(
+      stateSubject.value,
+      event,
+      stateSubject,
+      httpService,
+      storageService
+    );
+    onListTaskContinue(
+      stateSubject.value,
+      event,
+      stateSubject,
+      httpService,
+      storageService
+    );
+    onListTaskTrash(
+      stateSubject.value,
+      event,
+      stateSubject,
+      httpService,
+      storageService
+    );
+    onListTaskRestore(
+      stateSubject.value,
+      event,
+      stateSubject,
+      httpService,
+      storageService
+    );
+    onToastUndo(
+      stateSubject.value,
+      event,
+      stateSubject,
+      httpService,
+      storageService
+    );
+    doUpdateTasks(
+      stateSubject.value,
+      event,
+      stateSubject,
+      httpService,
+      storageService
+    );
+  };
+
+  eventSubject.subscribe((e) => handler(e));
+
+  return [stateSubject.value, stateSubject, eventSubject];
+}
 
 type StateObserver = Observer<PageState>;
 
