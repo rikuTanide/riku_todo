@@ -106,7 +106,3 @@ PUT /tasks/:task_id
 
 ### WebSocketエンドポイント
 何かメッセージを送ればすべてのWebSocket Connectionに空のメッセージが送られるようにする
-
-### ログアウト
-/logout
-Clear-Site-Dataを発行するためのエンドポイント
