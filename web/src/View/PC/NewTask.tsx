@@ -2,56 +2,60 @@ import React, { useEffect } from "react";
 import { PageState } from "../../Types/State";
 import { Observable, Observer } from "rxjs";
 import { Event } from "../../Types/Event";
+import Modal from "@material-ui/core/Modal";
+import { makeStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
+import { NewTask as NewTaskInner } from "../SP/NewTask";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: 300,
+    flexGrow: 1,
+    minWidth: 300,
+    transform: "translateZ(0)",
+    // The position fixed scoping doesn't work in IE 11.
+    // Disable this demo to preserve the others.
+    "@media all and (-ms-high-contrast: none)": {
+      display: "none",
+    },
+  },
+  modal: {
+    display: "flex",
+    padding: theme.spacing(1),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  paper: {
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: "2px solid #000",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+}));
+
 export const NewTask: React.FunctionComponent<{
   state: PageState;
   observer: Observer<Event>;
 }> = (props) => {
-  const state = props.state;
+  const classes = useStyles();
 
-  useEffect(() => {
-    props.observer.next({
-      type: "new task / open",
-    });
-  }, []);
-
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    props.observer.next({
-      type: "new task / submit",
-    });
-  }
-
-  function onTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    props.observer.next({
-      type: "new task / title input",
-      title: e.target.value,
-    });
-  }
-
-  function onBodyChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    props.observer.next({
-      type: "new task / body input",
-      body: e.target.value,
-    });
-  }
+  const history = useHistory();
 
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <div>
-          <input
-            type="text"
-            value={state.newTask.title}
-            onChange={onTitleChange}
-            required
-          />
-        </div>
-        <div>
-          <textarea value={state.newTask.body} onChange={onBodyChange} />
-        </div>
-
-        <button>登録</button>
-      </form>
-    </div>
+    <Modal
+      disablePortal
+      disableEnforceFocus
+      disableAutoFocus
+      open
+      aria-labelledby="server-modal-title"
+      aria-describedby="server-modal-description"
+      className={classes.modal}
+      onClose={() => history.push("/")}
+    >
+      <div className={classes.paper}>
+        <NewTaskInner {...props} />
+      </div>
+    </Modal>
   );
 };

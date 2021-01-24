@@ -59,6 +59,14 @@ const _Board: React.FunctionComponent<{
     else if (value == 2) history.push("?trash=true");
   }
 
+  const pc = props.tasks.filter(
+    (t) => t.progress == "continue" && t.trash == ""
+  ).length;
+  const cc = props.tasks.filter(
+    (t) => t.progress == "complete" && t.trash == ""
+  ).length;
+  const tc = props.tasks.filter((t) => t.trash == "trash").length;
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -67,9 +75,9 @@ const _Board: React.FunctionComponent<{
           onChange={handleChange}
           aria-label="simple tabs example"
         >
-          <Tab label="進行中" value={0} />
-          <Tab label="完了" value={1} />
-          <Tab label="ゴミ箱" value={2} />
+          <Tab label={`進行中(${pc})`} value={0} />
+          <Tab label={`完了(${cc})`} value={1} />
+          <Tab label={`ゴミ箱(${tc})`} value={2} />
         </Tabs>
       </AppBar>
       {type == "continue" ? <Continues {...props} /> : ""}
