@@ -60,7 +60,7 @@ export const LoginPage: React.FunctionComponent<{
   observer: Observer<LoginPageEvent>;
   state: State;
 }> = (props) => {
-  function handle(e: React.FormEvent) {
+  function submit(e: React.FormEvent) {
     e.preventDefault();
     props.observer.next({
       type: "login / try login",
@@ -73,45 +73,85 @@ export const LoginPage: React.FunctionComponent<{
       type: "login / switch to sign up",
     });
   }
+  function inputMailAddr(e: React.ChangeEvent<HTMLInputElement>) {
+    props.observer.next({
+      type: "login / mail addr",
+      mailAddr: e.target.value,
+    });
+  }
+
+  function inputPassword(e: React.ChangeEvent<HTMLInputElement>) {
+    props.observer.next({
+      type: "login / password",
+      password: e.target.value,
+    });
+  }
+  const classes = useStyles();
 
   return (
-    <div>
-      <form onSubmit={handle}>
-        <fieldset disabled={props.state.loading}>
-          <input
-            type="email"
-            value={props.state.loginMailAddr}
-            placeholder="メールアドレス"
-            required
-            onChange={(e) =>
-              props.observer.next({
-                type: "login / mail addr",
-                mailAddr: e.target.value,
-              })
-            }
-          />
-          <br />
-          <input
-            type="password"
-            value={props.state.loginPassword}
-            placeholder="パスワード"
-            required
-            onChange={(e) =>
-              props.observer.next({
-                type: "login / password",
-                password: e.target.value,
-              })
-            }
-          />
-          <br />
-          <button>送信</button>
-        </fieldset>
-      </form>
-      {props.state.hasError ? <p>エラー</p> : ""}
-      <a onClick={move} href="#">
-        新規登録する
-      </a>
-    </div>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          ログイン
+        </Typography>
+        <form className={classes.form} noValidate onSubmit={submit}>
+          <fieldset disabled={props.state.loading}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="メールアドレス"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              onChange={inputMailAddr}
+              value={props.state.loginMailAddr}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="パスワード"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={inputPassword}
+              value={props.state.loginPassword}
+            />
+            {props.state.hasError ? <Alert severity="error">エラー</Alert> : ""}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              {props.state.loading ? (
+                <CircularProgress color="secondary" />
+              ) : (
+                ""
+              )}
+              ログイン
+            </Button>
+            <Grid container>
+              <Grid item>
+                <Link href="#" variant="body2" onClick={move}>
+                  会員登録する
+                </Link>
+              </Grid>
+            </Grid>
+          </fieldset>
+        </form>
+      </div>
+    </Container>
   );
 };
 
