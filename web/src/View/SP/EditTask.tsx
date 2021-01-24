@@ -107,8 +107,8 @@ export const EditTask: React.FunctionComponent<{
         <div>
           <TextField
             label="本文"
-            value={editTask.next.title}
-            onChange={onTitleChange}
+            value={editTask.next.body}
+            onChange={onBodyChange}
             variant="outlined"
             multiline={true}
             rows={5}

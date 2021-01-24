@@ -433,7 +433,7 @@ export async function onEditSave(
 
   const prevEdit = prev.editTask!;
   const updatingTaskSummaries = prev.taskSummaries.map((t) =>
-    t.id == prevEdit.id ? { ...t, updating: true } : t
+    t.id == prevEdit.id ? { ...t, updating: true, title: prevEdit.next.title } : t
   );
   const next: PageState = {
     ...prev,
@@ -446,6 +446,7 @@ export async function onEditSave(
   httpService.message();
   if (ok) {
     {
+      const prev = getState();
       const next: PageState = {
         ...prev,
         editTask: undefined,
@@ -465,6 +466,7 @@ export async function onEditSave(
       observer.next(next);
     }
   } else {
+    const prev = getState();
     {
       const next: PageState = {
         ...prev,

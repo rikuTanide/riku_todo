@@ -13,11 +13,11 @@ import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 
 const useStyles = makeStyles((theme) => ({
-    fab: {
-        position: 'fixed',
-        bottom: theme.spacing(2),
-        right: theme.spacing(2),
-    },
+  fab: {
+    position: "fixed",
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
+  },
 }));
 
 // スマホページは新規作成画面と編集画面を全画面表示するので
@@ -53,8 +53,12 @@ export const App: React.FunctionComponent<{
       {toast ? <Toast toast={toast} observer={props.observer} /> : ""}
       <Route path="/" exact>
         <div className={classes.fab}>
-          <Fab color="primary" aria-label="add" onClick={()=>history.push("/new")}>
-              <AddIcon />
+          <Fab
+            color="primary"
+            aria-label="add"
+            onClick={() => history.push("/new")}
+          >
+            <AddIcon />
           </Fab>
         </div>
       </Route>

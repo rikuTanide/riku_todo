@@ -33,8 +33,7 @@ import { CardActionArea } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
 import RestoreIcon from "@material-ui/icons/Restore";
-import LinearProgress from '@material-ui/core/LinearProgress';
-
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -142,16 +141,27 @@ const Continues: React.FunctionComponent<{
   return (
     <div>
       <h2>進行中</h2>
-      {props.submitting ? <Card elevation={3}><LinearProgress /></Card> : ""}
+      {props.submitting ? (
+        <Card elevation={3}>
+          <LinearProgress />
+        </Card>
+      ) : (
+        ""
+      )}
       {tasks.map((t) => (
         <Card elevation={3} key={t.id} className={classes.root}>
           <CardActionArea onClick={() => moveToEdit(t.id)}>
             <CardContent>
+              {t.updating ? (
+                  <Card elevation={3}>
+                    <LinearProgress />
+                  </Card>
+              ) : (
+                  ""
+              )}
               <h2>
                 {t.title}
-                <IconButton>
-                  <EditIcon />
-                </IconButton>
+                <EditIcon />
               </h2>
             </CardContent>
           </CardActionArea>
@@ -209,9 +219,7 @@ const Completes: React.FunctionComponent<{
             <CardContent>
               <h2>
                 {t.title}
-                <IconButton>
-                  <EditIcon />
-                </IconButton>
+                <EditIcon />
               </h2>
             </CardContent>
           </CardActionArea>
@@ -262,9 +270,7 @@ const Trashs: React.FunctionComponent<{
             <CardContent>
               <h2>
                 {t.title}
-                <IconButton>
-                  <EditIcon />
-                </IconButton>
+                <EditIcon />
               </h2>
             </CardContent>
           </CardActionArea>
