@@ -11,11 +11,17 @@ export const onMessage = async (event, _2, callback) => {
 
   const apiGateway = new AWS.ApiGatewayManagementApi({
     apiVersion: "2018-11-29",
-    endpoint: event.requestContext.domainName + "/" + event.requestContext.stage
+    endpoint:
+      event.requestContext.domainName + "/" + event.requestContext.stage,
   });
   for (const item of data) {
+    const id = (item.id as any).S;
+    if (id == event.requestContext.connectionId) {
+      console.log("it's me!");
+      continue;
+    }
     const sendParam: AWS.ApiGatewayManagementApi.Types.PostToConnectionRequest = {
-      ConnectionId: (item.id as any).S,
+      ConnectionId: id,
       Data: "message",
     };
     try {
