@@ -10,6 +10,32 @@ import {
   useHistory,
   useLocation,
 } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import TextField from "@material-ui/core/TextField";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
+  formRoot: {
+    "& .MuiTextField-root": {
+      margin: theme.spacing(1),
+      width: "80%",
+    },
+  },
+}));
 
 export const EditTask: React.FunctionComponent<{
   state: PageState;
@@ -18,6 +44,7 @@ export const EditTask: React.FunctionComponent<{
   const state = props.state;
 
   const { taskID } = useParams<{ taskID: string }>();
+  const classes = useStyles();
 
   useEffect(() => {
     props.observer.next({
@@ -53,24 +80,44 @@ export const EditTask: React.FunctionComponent<{
   }
 
   return (
-    <div style={{ border: "solid 1px black" }}>
-      詳細
-      <form onSubmit={onSubmit}>
+    <div>
+      <form onSubmit={onSubmit} className={classes.formRoot}>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" className={classes.title}>
+              詳細
+            </Typography>
+            <Button color="inherit" onClick={onSubmit}>
+              保存
+            </Button>
+          </Toolbar>
+        </AppBar>
+
         <div>
-          <input
-            type="text"
+          <TextField
+            required
+            label="タイトル"
             value={editTask.next.title}
             onChange={onTitleChange}
-            required
+            variant="outlined"
+            fullWidth
           />
         </div>
+
         <div>
-          <textarea value={editTask.next.body} onChange={onBodyChange} />
+          <TextField
+            label="本文"
+            value={editTask.next.title}
+            onChange={onTitleChange}
+            variant="outlined"
+            multiline={true}
+            rows={5}
+            fullWidth
+          />
         </div>
         <p>
           <cite>{editTask.next.nickname}</cite>
         </p>
-        <button>登録</button>
       </form>
     </div>
   );
