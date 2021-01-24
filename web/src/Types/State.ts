@@ -1,5 +1,5 @@
 import { TaskSummary } from "./Model";
-import { Task } from "./Rest";
+import { ProgressStatus, Task, TrashStatus } from "./Rest";
 
 export interface PageState {
   taskSummaries: TaskSummary[];
@@ -26,7 +26,13 @@ export type Toast =
   | { type: "update task submit error" }
   | { type: "fetch detail error" }
   | { type: "edit undo"; task: Task }
-  | { type: "edit redo"; task: Task };
+  | { type: "edit redo"; task: Task }
+  | {
+      type: "list status change error";
+      taskID: string;
+      trash: TrashStatus;
+      progress: ProgressStatus;
+    };
 
 export type LoginPageType = "login" | "sign up";
 

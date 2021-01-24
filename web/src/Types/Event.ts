@@ -16,6 +16,7 @@ export type Event =
   | { type: "list / trash"; taskID: string }
   | { type: "list / restore"; taskID: string }
   | { type: "toast / redo-undo" }
+  | { type: "toast / update status" }
   | { type: "do update tasks" };
 
 export type LoginPageEvent =
