@@ -14,6 +14,7 @@ export interface StorageService {
 
 export interface HttpService {
   message(): void;
+  onMessage: Observable<string>;
 
   getTaskSummaries(): Promise<TaskSummary[] | null>;
   getTask(id: string): Promise<Task | null>;

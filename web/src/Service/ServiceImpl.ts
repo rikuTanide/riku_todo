@@ -14,6 +14,7 @@ import {
   CognitoUserSession,
   CognitoUserAttribute,
 } from "amazon-cognito-identity-js";
+import { Observable, Subject } from "rxjs";
 export const currentTimeServiceImple: CurrentTimeService = () => new Date();
 
 export class StorageServiceImple implements StorageService {
@@ -46,11 +47,19 @@ function validate(data: any) {
 
 export class HttpServiceImpl implements HttpService {
   private webSocket: WebSocket;
+  private subject = new Subject<string>();
+
+  public get onMessage(): Observable<string> {
+    return this.subject;
+  }
 
   constructor(private axios: AxiosInstance) {
     this.webSocket = new WebSocket(
-      "wss://3l2sfzhzpi.execute-api.us-east-1.amazonaws.com/dev"
+      "wss://ymftu3olv0.execute-api.us-east-1.amazonaws.com/dev"
     );
+    this.webSocket.addEventListener("message", (e) => {
+      this.subject.next(e.toString());
+    });
   }
 
   public message(): void {

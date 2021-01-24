@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { CurrentTimeService, StorageService, User } from "./Service/Service";
+import {
+  CurrentTimeService,
+  HttpService,
+  StorageService,
+  User,
+} from "./Service/Service";
 import Axios, { AxiosInstance } from "axios";
 import { useMediaQuery } from "react-responsive";
 import { HashRouter, Router, useHistory } from "react-router-dom";
@@ -19,10 +24,17 @@ const PC = React.lazy(() => import("./View/PC/App"));
 const SP = React.lazy(() => import("./View/SP/App"));
 
 export function showMyPage(user: User) {
+  const axios = Axios.create({
+    baseURL: "https://8p31a5pvr0.execute-api.us-east-1.amazonaws.com/dev/",
+    headers: { Authorization: user.idToken },
+    timeout: 10000,
+  });
+  const httpService = new HttpServiceImpl(axios);
+
   ReactDOM.render(
     <React.StrictMode>
       <HashRouter>
-        <RouterWrapper user={user} />
+        <RouterWrapper user={user} httpService={httpService} />
       </HashRouter>
     </React.StrictMode>,
     document.getElementById("root")
@@ -30,26 +42,29 @@ export function showMyPage(user: User) {
 }
 
 // historyを取得するため
-const RouterWrapper: React.FunctionComponent<{ user: User }> = (props) => {
+const RouterWrapper: React.FunctionComponent<{
+  user: User;
+  httpService: HttpService;
+}> = (props) => {
   const user = props.user;
-  const axios = Axios.create({
-    baseURL: "https://8p31a5pvr0.execute-api.us-east-1.amazonaws.com/dev/",
-    headers: { Authorization: user.idToken },
-    timeout: 10000,
-  });
 
   const storageService: StorageService = new StorageServiceImple();
-  const httpService = new HttpServiceImpl(axios);
   const currentTimeService: CurrentTimeService = currentTimeServiceImple;
   const history = useHistory();
 
   const [defaultState, stateObservable, eventObserver] = setUp(
     storageService,
-    httpService,
+    props.httpService,
     currentTimeService,
     history,
     user.userID,
     user.nickname
+  );
+
+  props.httpService.onMessage.subscribe((_) =>
+    eventObserver.next({
+      type: "do update tasks",
+    })
   );
 
   return (

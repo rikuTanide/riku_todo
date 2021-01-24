@@ -54,7 +54,14 @@ export function setUp(
     onEditBody(getState, event, stateSubject);
     onEditProgress(getState, event, stateSubject);
     onEditTrash(getState, event, stateSubject);
-    onEditSave(getState, event, stateSubject, httpService, storageService);
+    onEditSave(
+      getState,
+      event,
+      stateSubject,
+      httpService,
+      storageService,
+      history
+    );
     onListTaskComplete(
       getState,
       event,
@@ -418,7 +425,8 @@ export async function onEditSave(
   event: Event,
   observer: StateObserver,
   httpService: HttpService,
-  storageService: StorageService
+  storageService: StorageService,
+  history: History
 ) {
   if (event.type != "detail / save") return false;
   const prev = getState();
@@ -433,7 +441,7 @@ export async function onEditSave(
     taskSummaries: updatingTaskSummaries,
   };
   observer.next(next);
-
+  history.push("/");
   const ok = httpService.putTask(prevEdit.next);
   httpService.message();
   if (ok) {

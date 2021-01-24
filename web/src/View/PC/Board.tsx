@@ -57,7 +57,7 @@ const Continues: React.FunctionComponent<{
             <button onClick={() => complete(t.id)}>完了</button>
             <button onClick={() => trash(t.id)}>削除</button>
           </div>
-          <Link to={`/tasks/${t.id}/edit`}>編集</Link>
+          <Link to={`/tasks/${t.id}/edit`}>詳細</Link>
         </div>
       ))}
     </div>
@@ -97,7 +97,7 @@ const Completes: React.FunctionComponent<{
             <button onClick={() => toContinue(t.id)}>未完了</button>
             <button onClick={() => trash(t.id)}>削除</button>
           </div>
-          <Link to={`/tasks/${t.id}/edit`}>編集</Link>
+          <Link to={`/tasks/${t.id}/edit`}>詳細</Link>
         </div>
       ))}
     </div>
@@ -129,7 +129,7 @@ const Trashs: React.FunctionComponent<{
           <div>
             <button onClick={() => restore(t.id)}>元に戻す</button>
           </div>
-          <Link to={`/tasks/${t.id}/edit`}>編集</Link>
+          <Link to={`/tasks/${t.id}/edit`}>詳細</Link>
         </div>
       ))}
     </div>
