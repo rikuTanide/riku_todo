@@ -3,12 +3,14 @@ import { PageState } from "../Types/State";
 import {
   CurrentTimeService,
   HttpService,
-  StateObserver,
   StorageService,
 } from "../Service/Service";
 import { TaskSummary } from "../Types/Model";
 import * as RestType from "../Types/Rest";
 import { Task } from "../Types/Rest";
+import { Observer } from "rxjs";
+
+type StateObserver = Observer<PageState>;
 
 // 新しいタスクを追加するページ
 // リロードに備えて一文字入力するごとにローカルストレージに保存し
@@ -628,7 +630,7 @@ export async function onToastUndo(
   if (event.type != "toast / redo-undo") return false;
 
   // undoコマンドが打てるということはここにデータがあるはず
-  const nextTask: Task = ((prev.toast!) as {task: Task}).task;
+  const nextTask: Task = (prev.toast! as { task: Task }).task;
   const taskID = nextTask.id;
   const nextTaskSummary: TaskSummary = {
     id: nextTask.id,

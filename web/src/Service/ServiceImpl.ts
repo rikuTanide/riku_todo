@@ -1,7 +1,19 @@
-import { CurrentTimeService, HttpService, StorageService } from "./Service";
+import {
+  CurrentTimeService,
+  HttpService,
+  LoginService,
+  StorageService,
+  User,
+} from "./Service";
 import { AxiosInstance } from "axios";
 import { PostTask, Task, TaskSummary } from "../Types/Rest";
-
+import {
+  CognitoUserPool,
+  CognitoUser,
+  AuthenticationDetails,
+  CognitoUserSession,
+  CognitoUserAttribute,
+} from "amazon-cognito-identity-js";
 export const currentTimeServiceImple: CurrentTimeService = () => new Date();
 
 export class StorageServiceImple implements StorageService {
@@ -43,7 +55,7 @@ export class HttpServiceImpl implements HttpService {
     this.webSocket.send("");
   }
 
-  public async getTask(id: string): Promise<TaskSummary | null> {
+  public async getTask(id: string): Promise<Task | null> {
     try {
       const res = await this.axios.get(`tasks/${id}`);
       validate(res);
@@ -83,5 +95,101 @@ export class HttpServiceImpl implements HttpService {
       console.log(e);
       return false;
     }
+  }
+}
+
+export class LoginServiceImple implements LoginService {
+  pool = new CognitoUserPool({
+    UserPoolId: "us-east-1_ijq19eVV6", // User Pools の画面から取得できる User Pools ID。
+    ClientId: "1188uofmn5vdg34h32tv99meji", // User Pools で発行したクライアントアプリケーションのID。
+  });
+  public login(mailAddr: string, password: string): Promise<boolean> {
+    return Promise.resolve(false);
+  }
+
+  public logout(): void {}
+
+  public reload(): void {
+    window.location.reload();
+  }
+
+  public signUp(
+    mailAddr: string,
+    nickname: string,
+    password: string
+  ): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.pool.signUp(
+        mailAddr,
+        password,
+        [new CognitoUserAttribute({ Name: "nickname", Value: nickname })],
+        [],
+        (err, res) => {
+          if (err || !res) {
+            resolve(false);
+            return;
+          }
+
+          // sign upしただけではログインしないようだ
+          const user = new CognitoUser({ Username: mailAddr, Pool: this.pool });
+          user.authenticateUser(
+            new AuthenticationDetails({
+              Username: mailAddr,
+              Password: password,
+            }),
+            {
+              onSuccess: () => resolve(true),
+              onFailure: () => resolve(false),
+            }
+          );
+        }
+      );
+    });
+  }
+
+  public getCurrentUser(): Promise<User> {
+    return new Promise<User>((resolve) => {
+      const user: CognitoUser = this.pool.getCurrentUser()!;
+      user.getSession(
+        async (err: Error | null, session: CognitoUserSession | null) => {
+          if (err || !session) {
+            console.log(err);
+            return;
+          }
+          const token = session.getIdToken();
+          const userID = token.payload["sub"] as string;
+          const nickname = token.payload["nickname"] as string;
+          const currentTime = () => new Date();
+
+          if (!nickname) return;
+          if (!userID) return;
+          if (!token) return;
+
+          resolve({
+            userID: userID,
+            idToken: token.getJwtToken(),
+            nickname: nickname,
+          });
+        }
+      );
+    });
+  }
+
+  public isLoggedIn(): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      const user = this.pool.getCurrentUser();
+
+      if (!user) {
+        resolve(false);
+        return;
+      }
+      user.getSession(
+        (err: Error | null, session: CognitoUserSession | null) => {
+          console.log(err);
+          console.log(session);
+          resolve(!!session);
+        }
+      );
+    });
   }
 }

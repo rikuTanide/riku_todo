@@ -15,7 +15,7 @@ export type Event =
   | { type: "list / continue"; taskID: string }
   | { type: "list / trash"; taskID: string }
   | { type: "list / restore"; taskID: string }
-  | { type: "toast / redo-undo";  }
+  | { type: "toast / redo-undo" }
   | { type: "do update tasks" };
 
 export type LoginPageEvent =
@@ -23,7 +23,7 @@ export type LoginPageEvent =
   | { type: "login / mail addr"; mailAddr: string }
   | { type: "login / password"; password: string }
   | { type: "login / try login" }
-  | { type: "sing up / switch to login"; mailAddr: string }
+  | { type: "sing up / switch to login" }
   | { type: "sign up / mail add"; mailAddr: string }
   | { type: "sign up / nickname"; nickname: string }
   | { type: "sign up / password"; password: string }

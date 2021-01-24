@@ -1,4 +1,4 @@
-import { Observer } from "rxjs";
+import { Observable, Observer } from "rxjs";
 import { PostTask, Task, TaskSummary } from "../Types/Rest";
 import { LoginPageState, PageState } from "../Types/State";
 import { Event, LoginPageEvent } from "../Types/Event";
@@ -21,11 +21,14 @@ export interface HttpService {
   putTask(task: Task): Promise<boolean>;
 }
 
-export type StateObserver = Observer<PageState>;
-export type EventEmitter = (event: Event) => void;
-export type EventStream = Observer<Event>;
+export interface User {
+  userID: string;
+  nickname: string;
+  idToken: string;
+}
 
 export interface LoginService {
+  isLoggedIn(): Promise<boolean>;
   signUp(
     mailAddr: string,
     nickname: string,
@@ -34,8 +37,5 @@ export interface LoginService {
   login(mailAddr: string, password: string): Promise<boolean>;
   logout(): void;
   reload(): void;
+  getCurrentUser(): Promise<User>;
 }
-
-export type LoginPageStateObserver = Observer<LoginPageState>;
-export type LoginPageEventEmitter = (event: LoginPageEventEmitter) => void;
-export type LoginPageEventStream = Observer<LoginPageEvent>;

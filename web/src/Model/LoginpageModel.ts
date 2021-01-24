@@ -1,9 +1,46 @@
-import { LoginPageEvent as Event } from "../Types/Event";
-import { LoginPageState as State } from "../Types/State";
+import { LoginPageEvent, LoginPageEvent as Event } from "../Types/Event";
+import { LoginPageState, LoginPageState as State } from "../Types/State";
+import { LoginService } from "../Service/Service";
 import {
-  LoginPageStateObserver as Observer,
-  LoginService,
-} from "../Service/Service";
+  BehaviorSubject,
+  Observable,
+  Observer as RxObserver,
+  Subject,
+} from "rxjs";
+
+export function setUp(
+  loginService: LoginService
+): [State, RxObserver<LoginPageEvent>, Observable<LoginPageState>] {
+  const defaultState: State = {
+    type: "login",
+    loginMailAddr: "",
+    loginPassword: "",
+    signUpMailAddr: "",
+    signUpNickname: "",
+    signUpPassword: "",
+    hasError: false,
+    loading: false,
+  };
+  const stateSubject = new BehaviorSubject<State>(defaultState);
+  const subject = new Subject<LoginPageEvent>();
+
+  const emitter = (event: Event) => {
+    switchToSignUp(stateSubject.value, event, stateSubject);
+    onLoginPageMailAddr(stateSubject.value, event, stateSubject);
+    onLoginPagePassword(stateSubject.value, event, stateSubject);
+    onTryLogin(stateSubject.value, event, stateSubject, loginService);
+    switchToLogin(stateSubject.value, event, stateSubject);
+    onSignUpPageMailAddr(stateSubject.value, event, stateSubject);
+    onSignUpPageNickname(stateSubject.value, event, stateSubject);
+    onSignUpPagePassword(stateSubject.value, event, stateSubject);
+    onTrySignUp(stateSubject.value, event, stateSubject, loginService);
+  };
+
+  subject.subscribe(emitter);
+
+  return [defaultState, subject, stateSubject];
+}
+type Observer = RxObserver<LoginPageState>;
 
 export function switchToSignUp(prev: State, event: Event, observer: Observer) {
   if (event.type != "login / switch to sign up") return false;
@@ -86,7 +123,7 @@ export function onSignUpPageMailAddr(
   if (event.type != "sign up / mail add") return;
   const next: State = {
     ...prev,
-    loginMailAddr: event.mailAddr,
+    signUpMailAddr: event.mailAddr,
   };
   observer.next(next);
 }
@@ -112,7 +149,7 @@ export function onSignUpPagePassword(
   if (event.type != "sign up / password") return;
   const next: State = {
     ...prev,
-    loginPassword: event.password,
+    signUpPassword: event.password,
   };
   observer.next(next);
 }
