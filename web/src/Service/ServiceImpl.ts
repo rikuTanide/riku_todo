@@ -48,7 +48,7 @@ export class HttpServiceImpl implements HttpService {
   private webSocket: WebSocket;
 
   constructor(private axios: AxiosInstance) {
-    this.webSocket = new WebSocket("");
+    this.webSocket = new WebSocket("wss://3l2sfzhzpi.execute-api.us-east-1.amazonaws.com/dev");
   }
 
   public message(): void {

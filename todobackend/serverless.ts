@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { hello } from './src/functions';
+import { hello, websocket } from './src/functions';
 
 const serverlessConfiguration: AWS = {
   service: 'todobackend',
@@ -23,8 +23,15 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
     },
     lambdaHashingVersion: '20201221',
+    iamRoleStatements: [
+      {
+        Effect: "Allow",
+        Resource: "arn:aws:dynamodb:us-east-1:692619880522:table/websocket_connections",
+        Action: ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:Scan",  "dynamodb:DeleteItem" ],
+      },
+    ],
   },
-  functions: { hello }
+  functions: { hello , ...websocket }
 }
 
 module.exports = serverlessConfiguration;
