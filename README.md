@@ -1,6 +1,18 @@
 # riku_todo
 ToDoアプリ
 
+## 動作確認方法
+### 公開アプリ
+https://ricktodo.s3-ap-northeast-1.amazonaws.com/index.html#/
+
+### ローカル
+```
+git clone git@github.com:rikuTanide/riku_todo.git
+cd rick_todo/web
+yarn install
+yarn start or yarn test
+```
+
 ## 仕様
 
 ### 機能
@@ -10,7 +22,7 @@ ToDoアプリ
  - ToDo作成
  - ToDo閲覧
  - ToDo編集
- - Status変更
+ - 一覧画面で進捗を変更
 
 ### ToDoの項目
  - タイトル
