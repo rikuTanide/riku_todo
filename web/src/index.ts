@@ -1,5 +1,3 @@
-import React from "react";
-import ReactDOM from "react-dom";
 import "./index.css";
 import { LoginServiceImple } from "./Service/ServiceImpl";
 import { LoginService } from "./Service/Service";
