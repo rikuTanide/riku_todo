@@ -104,7 +104,19 @@ export class LoginServiceImple implements LoginService {
     ClientId: "1188uofmn5vdg34h32tv99meji", // User Pools で発行したクライアントアプリケーションのID。
   });
   public login(mailAddr: string, password: string): Promise<boolean> {
-    return Promise.resolve(false);
+    return new Promise<boolean>((resolve) => {
+      const user = new CognitoUser({ Username: mailAddr, Pool: this.pool });
+      user.authenticateUser(
+        new AuthenticationDetails({
+          Username: mailAddr,
+          Password: password,
+        }),
+        {
+          onSuccess: () => resolve(true),
+          onFailure: () => resolve(false),
+        }
+      );
+    });
   }
 
   public logout(): void {}
