@@ -78,6 +78,8 @@ export function setUp(
       storageService
     );
     onToastUndo(getState, event, stateSubject, httpService, storageService);
+    onUpdateStatus(getState, event, stateSubject, httpService, storageService);
+    onToastClose(getState, event, stateSubject);
     doUpdateTasks(getState, event, stateSubject, httpService, storageService);
   };
 
@@ -504,8 +506,11 @@ export async function onListTaskComplete(
         type: "list status change error",
         taskID: event.taskID,
         progress: "complete",
-        trash: "trash",
+        trash: "",
       },
+      taskSummaries: convertTaskSummariesType(
+          restoreFromStorage(storageService)
+      )
     };
     observer.next(next);
     return;
@@ -584,6 +589,9 @@ export async function onListTaskContinue(
         progress: "continue",
         trash: "",
       },
+      taskSummaries: convertTaskSummariesType(
+          restoreFromStorage(storageService)
+      )
     };
     observer.next(next);
     return;
@@ -654,15 +662,19 @@ export async function onListTaskTrash(
   const prevTask = await httpService.getTask(event.taskID);
   if (!prevTask) {
     const prev = getState();
+    const nextProgress = prev.taskSummaries.find(t => t.id == event.taskID )!.progress;
     const next: PageState = {
       ...prev,
       editTask: undefined,
       toast: {
         type: "list status change error",
         taskID: event.taskID,
-        progress: "continue",
+        progress: nextProgress,
         trash: "trash",
       },
+      taskSummaries: convertTaskSummariesType(
+          restoreFromStorage(storageService)
+      )
     };
     observer.next(next);
     return;
@@ -715,7 +727,7 @@ export async function onListTaskRestore(
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type != "list / trash") return false;
+  if (event.type != "list / restore") return false;
   const prev = getState();
 
   const updatingTaskSummaries = prev.taskSummaries.map(
@@ -733,15 +745,19 @@ export async function onListTaskRestore(
   const prevTask = await httpService.getTask(event.taskID);
   if (!prevTask) {
     const prev = getState();
+    const nextProgress = prev.taskSummaries.find(t => t.id == event.taskID )!.progress;
     const next: PageState = {
       ...prev,
       editTask: undefined,
       toast: {
         type: "list status change error",
         taskID: event.taskID,
-        progress: "continue",
+        progress: nextProgress,
         trash: "",
       },
+      taskSummaries: convertTaskSummariesType(
+          restoreFromStorage(storageService)
+      )
     };
     observer.next(next);
     return;
@@ -849,6 +865,17 @@ export async function onToastUndo(
   }
 }
 
+export async function onToastClose(
+  getState: GetState,
+  event: Event,
+  observer: StateObserver
+) {
+  if (event.type != "toast / close") return false;
+  const prev = getState();
+  const next: PageState = { ...prev, toast: undefined };
+  observer.next(next);
+}
+
 export async function onUpdateStatus(
   getState: GetState,
   event: Event,
@@ -881,6 +908,15 @@ export async function onUpdateStatus(
   // ここはしょうがない
   const prevTask = await httpService.getTask(nextTask.taskID);
   if (!prevTask) {
+    const prev = getState();
+    const next: PageState = {
+      ...prev,
+      editTask: undefined,
+      taskSummaries: convertTaskSummariesType(
+          restoreFromStorage(storageService)
+      ),
+    };
+    observer.next(next);
     return;
   }
 

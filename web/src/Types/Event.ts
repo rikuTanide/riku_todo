@@ -15,6 +15,7 @@ export type Event =
   | { type: "list / continue"; taskID: string }
   | { type: "list / trash"; taskID: string }
   | { type: "list / restore"; taskID: string }
+  | { type: "toast / close" }
   | { type: "toast / redo-undo" }
   | { type: "toast / update status" }
   | { type: "do update tasks" };

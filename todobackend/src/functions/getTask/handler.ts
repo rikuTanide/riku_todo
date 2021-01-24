@@ -18,7 +18,7 @@ const handler = async (event) => {
   const item = (res.$response.data as any).Item as any;
   const title = item["title"].S;
   const body = item["body"].S;
-  const time = item["time"].N;
+  const time = parseInt(item["time"].N, 10);
   const userID = item["userID"].S;
   const nickname = item["nickname"].S;
   const progress = item["progress"].S;
