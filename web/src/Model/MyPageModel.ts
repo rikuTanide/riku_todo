@@ -10,6 +10,8 @@ import * as RestType from "../Types/Rest";
 import { Task } from "../Types/Rest";
 import { BehaviorSubject, Observable, Observer, Subject } from "rxjs";
 
+type GetState = () => PageState;
+
 export function setUp(
   storageService: StorageService,
   httpService: HttpService,
@@ -29,12 +31,14 @@ export function setUp(
   const stateSubject = new BehaviorSubject<PageState>(defaultState);
   const eventSubject = new Subject<Event>();
 
+  const getState  = stateSubject.getValue;
+
   const handler = (event: Event) => {
-    openNewTaskPage(stateSubject.value, event, stateSubject, storageService);
-    onTitleInput(stateSubject.value, event, stateSubject, storageService);
-    onBodyInput(stateSubject.value, event, stateSubject, storageService);
+    openNewTaskPage(getState, event, stateSubject, storageService);
+    onTitleInput(getState, event, stateSubject, storageService);
+    onBodyInput(getState, event, stateSubject, storageService);
     onNewTaskSubmit(
-      stateSubject.value,
+      getState,
       event,
       stateSubject,
       storageService,
@@ -43,65 +47,41 @@ export function setUp(
       userID,
       nickname
     );
-    onDetailFetch(stateSubject.value, event, stateSubject, httpService);
-    onEditTitle(stateSubject.value, event, stateSubject);
-    onEditBody(stateSubject.value, event, stateSubject);
-    onEditProgress(stateSubject.value, event, stateSubject);
-    onEditTrash(stateSubject.value, event, stateSubject);
-    onEditSave(
-      stateSubject.value,
-      event,
-      stateSubject,
-      httpService,
-      storageService
-    );
+    onDetailFetch(getState, event, stateSubject, httpService);
+    onEditTitle(getState, event, stateSubject);
+    onEditBody(getState, event, stateSubject);
+    onEditProgress(getState, event, stateSubject);
+    onEditTrash(getState, event, stateSubject);
+    onEditSave(getState, event, stateSubject, httpService, storageService);
     onListTaskComplete(
-      stateSubject.value,
+      getState,
       event,
       stateSubject,
       httpService,
       storageService
     );
     onListTaskContinue(
-      stateSubject.value,
+      getState,
       event,
       stateSubject,
       httpService,
       storageService
     );
-    onListTaskTrash(
-      stateSubject.value,
-      event,
-      stateSubject,
-      httpService,
-      storageService
-    );
+    onListTaskTrash(getState, event, stateSubject, httpService, storageService);
     onListTaskRestore(
-      stateSubject.value,
+      getState,
       event,
       stateSubject,
       httpService,
       storageService
     );
-    onToastUndo(
-      stateSubject.value,
-      event,
-      stateSubject,
-      httpService,
-      storageService
-    );
-    doUpdateTasks(
-      stateSubject.value,
-      event,
-      stateSubject,
-      httpService,
-      storageService
-    );
+    onToastUndo(getState, event, stateSubject, httpService, storageService);
+    doUpdateTasks(getState, event, stateSubject, httpService, storageService);
   };
 
   eventSubject.subscribe((e) => handler(e));
   doUpdateTasks(
-    stateSubject.value,
+    getState,
     { type: "do update tasks" },
     stateSubject,
     httpService,
@@ -116,13 +96,14 @@ type StateObserver = Observer<PageState>;
 // リロードに備えて一文字入力するごとにローカルストレージに保存し
 // このページを開いたときに復帰する
 export function openNewTaskPage(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   storageService: StorageService
 ) {
   if (event.type != "new task / open") return false;
   const [title, body] = storageService.getNewTask();
+  const prev = getState();
   const next: PageState = {
     ...prev,
     newTask: {
@@ -135,12 +116,13 @@ export function openNewTaskPage(
 }
 
 export function onTitleInput(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   storageService: StorageService
 ) {
   if (event.type != "new task / title input") return false;
+  const prev = getState();
   const next: PageState = {
     ...prev,
     newTask: {
@@ -153,12 +135,13 @@ export function onTitleInput(
 }
 
 export function onBodyInput(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   storageService: StorageService
 ) {
   if (event.type != "new task / body input") return false;
+  const prev = getState();
   const next: PageState = {
     ...prev,
     newTask: {
@@ -173,7 +156,7 @@ export function onBodyInput(
 // 新規登録時にsubmittingをtrueにするとView側でローダーが表示される
 // HTTP Requestが失敗したらRedo用のトーストを表示する
 export async function onNewTaskSubmit(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   storageService: StorageService,
@@ -183,6 +166,7 @@ export async function onNewTaskSubmit(
   nickname: string
 ) {
   if (event.type != "new task / submit") return false;
+  const prev = getState();
   {
     const next: PageState = {
       ...prev,
@@ -207,6 +191,7 @@ export async function onNewTaskSubmit(
     httpService.message();
     storageService.putNewTask("", "");
     const nextTasks = await fetchTasks(httpService, storageService);
+    const prev = getState();
     const next: PageState = {
       ...prev,
       newTask: {
@@ -271,12 +256,14 @@ function convertTaskSummariesType(
 // View側では、編集画面を開いた直後に別のタスクが表示されることがないように
 // idとURLパラメータを比較する必要がある
 export async function onDetailFetch(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   httpService: HttpService
 ) {
   if (event.type != "detail / fetch") return false;
+  const prev = getState();
+
   {
     const empty: Task = {
       id: event.taskID,
@@ -309,6 +296,7 @@ export async function onDetailFetch(
     };
     observer.next(next);
   } else {
+    const prev = getState();
     const next: PageState = {
       ...prev,
       editTask: {
@@ -323,11 +311,13 @@ export async function onDetailFetch(
 }
 
 export function onEditTitle(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver
 ) {
   if (event.type != "detail / edit title") return false;
+  const prev = getState();
+
   const prevEdit = prev.editTask!;
   const next: PageState = {
     ...prev,
@@ -343,11 +333,13 @@ export function onEditTitle(
 }
 
 export function onEditBody(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver
 ) {
   if (event.type != "detail / edit body") return false;
+  const prev = getState();
+
   const prevEdit = prev.editTask!;
   const next: PageState = {
     ...prev,
@@ -363,11 +355,13 @@ export function onEditBody(
 }
 
 export function onEditProgress(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver
 ) {
   if (event.type != "detail / edit progress") return false;
+  const prev = getState();
+
   const prevEdit = prev.editTask!;
   const next: PageState = {
     ...prev,
@@ -382,11 +376,13 @@ export function onEditProgress(
   observer.next(next);
 }
 export function onEditTrash(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver
 ) {
   if (event.type != "detail / edit trash") return false;
+  const prev = getState();
+
   const prevEdit = prev.editTask!;
   const next: PageState = {
     ...prev,
@@ -411,13 +407,15 @@ export function onEditTrash(
 // 3. Localからタスク一覧を読み込んで上書き
 // 4. トーストでRedoをだす
 export async function onEditSave(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   httpService: HttpService,
   storageService: StorageService
 ) {
   if (event.type != "detail / save") return false;
+  const prev = getState();
+
   const prevEdit = prev.editTask!;
   const updatingTaskSummaries = prev.taskSummaries.map((t) =>
     t.id == prevEdit.id ? { ...t, updating: true } : t
@@ -443,6 +441,7 @@ export async function onEditSave(
 
     {
       const tasks = await fetchTasks(httpService, storageService);
+      const prev = getState();
       const next: PageState = {
         ...prev,
         editTask: undefined,
@@ -469,13 +468,15 @@ export async function onEditSave(
 // あまりアラートダイアログの類は好きではないので
 // Redoしやすいようにしたうえで一回の操作で完了するようにする
 export async function onListTaskComplete(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   httpService: HttpService,
   storageService: StorageService
 ) {
   if (event.type != "list / complete") return false;
+  const prev = getState();
+
   const updatingTaskSummaries = prev.taskSummaries.map(
     (t): TaskSummary =>
       t.id == event.taskID ? { ...t, progress: "complete", updating: true } : t
@@ -509,6 +510,7 @@ export async function onListTaskComplete(
 
     {
       const tasks = await fetchTasks(httpService, storageService);
+      const prev = getState();
       const next: PageState = {
         ...prev,
         editTask: undefined,
@@ -532,13 +534,15 @@ export async function onListTaskComplete(
 }
 
 export async function onListTaskContinue(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   httpService: HttpService,
   storageService: StorageService
 ) {
   if (event.type != "list / continue") return false;
+  const prev = getState();
+
   const updatingTaskSummaries = prev.taskSummaries.map(
     (t): TaskSummary =>
       t.id == event.taskID ? { ...t, progress: "continue", updating: true } : t
@@ -572,6 +576,7 @@ export async function onListTaskContinue(
 
     {
       const tasks = await fetchTasks(httpService, storageService);
+      const prev = getState();
       const next: PageState = {
         ...prev,
         editTask: undefined,
@@ -595,13 +600,15 @@ export async function onListTaskContinue(
 }
 
 export async function onListTaskTrash(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   httpService: HttpService,
   storageService: StorageService
 ) {
   if (event.type != "list / trash") return false;
+  const prev = getState();
+
   const updatingTaskSummaries = prev.taskSummaries.map(
     (t): TaskSummary =>
       t.id == event.taskID ? { ...t, trash: "trash", updating: true } : t
@@ -635,6 +642,7 @@ export async function onListTaskTrash(
 
     {
       const tasks = await fetchTasks(httpService, storageService);
+      const prev = getState();
       const next: PageState = {
         ...prev,
         editTask: undefined,
@@ -658,13 +666,15 @@ export async function onListTaskTrash(
 }
 
 export async function onListTaskRestore(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   httpService: HttpService,
   storageService: StorageService
 ) {
   if (event.type != "list / trash") return false;
+  const prev = getState();
+
   const updatingTaskSummaries = prev.taskSummaries.map(
     (t): TaskSummary =>
       t.id == event.taskID ? { ...t, trash: "", updating: true } : t
@@ -698,6 +708,7 @@ export async function onListTaskRestore(
 
     {
       const tasks = await fetchTasks(httpService, storageService);
+      const prev = getState();
       const next: PageState = {
         ...prev,
         editTask: undefined,
@@ -721,13 +732,14 @@ export async function onListTaskRestore(
 }
 
 export async function onToastUndo(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   httpService: HttpService,
   storageService: StorageService
 ) {
   if (event.type != "toast / redo-undo") return false;
+  const prev = getState();
 
   // undoコマンドが打てるということはここにデータがあるはず
   const nextTask: Task = (prev.toast! as { task: Task }).task;
@@ -761,6 +773,7 @@ export async function onToastUndo(
 
   if (ok) {
     const tasks = await fetchTasks(httpService, storageService);
+    const prev = getState();
     const next: PageState = {
       ...prev,
       editTask: undefined,
@@ -782,20 +795,20 @@ export async function onToastUndo(
 
 // ページ初期ロード時とWebSocket時
 export async function doUpdateTasks(
-  prev: PageState,
+  getState: GetState,
   event: Event,
   observer: StateObserver,
   httpService: HttpService,
   storageService: StorageService
 ) {
   if (event.type != "do update tasks") return false;
-  {
-    const tasks = await fetchTasks(httpService, storageService);
-    const next: PageState = {
-      ...prev,
-      editTask: undefined,
-      taskSummaries: tasks,
-    };
-    observer.next(next);
-  }
+
+  const tasks = await fetchTasks(httpService, storageService);
+  const prev = getState();
+  const next: PageState = {
+    ...prev,
+    editTask: undefined,
+    taskSummaries: tasks,
+  };
+  observer.next(next);
 }
