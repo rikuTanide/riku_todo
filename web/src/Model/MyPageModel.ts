@@ -509,8 +509,8 @@ export async function onListTaskComplete(
         trash: "",
       },
       taskSummaries: convertTaskSummariesType(
-          restoreFromStorage(storageService)
-      )
+        restoreFromStorage(storageService)
+      ),
     };
     observer.next(next);
     return;
@@ -590,8 +590,8 @@ export async function onListTaskContinue(
         trash: "",
       },
       taskSummaries: convertTaskSummariesType(
-          restoreFromStorage(storageService)
-      )
+        restoreFromStorage(storageService)
+      ),
     };
     observer.next(next);
     return;
@@ -662,7 +662,8 @@ export async function onListTaskTrash(
   const prevTask = await httpService.getTask(event.taskID);
   if (!prevTask) {
     const prev = getState();
-    const nextProgress = prev.taskSummaries.find(t => t.id == event.taskID )!.progress;
+    const nextProgress = prev.taskSummaries.find((t) => t.id == event.taskID)!
+      .progress;
     const next: PageState = {
       ...prev,
       editTask: undefined,
@@ -673,8 +674,8 @@ export async function onListTaskTrash(
         trash: "trash",
       },
       taskSummaries: convertTaskSummariesType(
-          restoreFromStorage(storageService)
-      )
+        restoreFromStorage(storageService)
+      ),
     };
     observer.next(next);
     return;
@@ -745,7 +746,8 @@ export async function onListTaskRestore(
   const prevTask = await httpService.getTask(event.taskID);
   if (!prevTask) {
     const prev = getState();
-    const nextProgress = prev.taskSummaries.find(t => t.id == event.taskID )!.progress;
+    const nextProgress = prev.taskSummaries.find((t) => t.id == event.taskID)!
+      .progress;
     const next: PageState = {
       ...prev,
       editTask: undefined,
@@ -756,8 +758,8 @@ export async function onListTaskRestore(
         trash: "",
       },
       taskSummaries: convertTaskSummariesType(
-          restoreFromStorage(storageService)
-      )
+        restoreFromStorage(storageService)
+      ),
     };
     observer.next(next);
     return;
@@ -913,7 +915,7 @@ export async function onUpdateStatus(
       ...prev,
       editTask: undefined,
       taskSummaries: convertTaskSummariesType(
-          restoreFromStorage(storageService)
+        restoreFromStorage(storageService)
       ),
     };
     observer.next(next);
