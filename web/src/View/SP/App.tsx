@@ -20,10 +20,6 @@ export const App: React.FunctionComponent<{
 
   return (
     <div>
-      Hello SP!
-      <Link to="?">進行中</Link>
-      <Link to="?progress=complete">完了</Link>
-      <Link to="?trash=true">ゴミ箱</Link>
       <Route
         path="/"
         exact

@@ -4,9 +4,29 @@ import { Observer } from "rxjs";
 import { Event } from "../../Types/Event";
 import { Link } from "react-router-dom";
 import { TaskSummary } from "../../Types/Model";
+import { makeStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  useParams,
+  useHistory,
+  useLocation,
+} from "react-router-dom";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
 
 // 各ボードはタスク一覧に対して冪等なので、これをメモ化の単位とする。
-
 const _Board: React.FunctionComponent<{
   submitting: boolean;
   tasks: TaskSummary[];
@@ -14,9 +34,28 @@ const _Board: React.FunctionComponent<{
   observer: Observer<Event>;
 }> = (props) => {
   const [type, tab] = checkType(props.query);
+  const classes = useStyles();
+
+  const history = useHistory();
+  function handleChange(e: any, value: any) {
+    if (value == 0) history.push("?");
+    else if (value == 1) history.push("?progress=complete");
+    else if (value == 2) history.push("?trash=true");
+  }
 
   return (
-    <div>
+    <div className={classes.root}>
+      <AppBar position="static">
+        <Tabs
+          value={tab}
+          onChange={handleChange}
+          aria-label="simple tabs example"
+        >
+          <Tab label="進行中" value={0} />
+          <Tab label="完了" value={1} />
+          <Tab label="ゴミ箱" value={2} />
+        </Tabs>
+      </AppBar>
       {type == "continue" ? <Continues {...props} /> : ""}
       {type == "complete" ? <Completes {...props} /> : ""}
       {type == "trash" ? <Trashs {...props} /> : ""}
