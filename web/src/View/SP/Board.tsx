@@ -233,6 +233,9 @@ const Trashs: React.FunctionComponent<{
   tasks: TaskSummary[];
   observer: Observer<Event>;
 }> = (props) => {
+  const classes = useCardStyles();
+  const history = useHistory();
+
   function restore(id: string) {
     props.observer.next({
       type: "list / restore",
@@ -240,22 +243,37 @@ const Trashs: React.FunctionComponent<{
     });
   }
 
+  function moveToEdit(id: string) {
+    history.push(`/tasks/${id}/edit`);
+  }
+
   const tasks = props.tasks
     .filter((t) => t.trash == "trash")
     .sort((t1, t2) => (t1.time > t2.time ? -1 : 1));
   return (
-    <div style={{ border: "solid 1px black" }}>
+    <div>
       <h2>ゴミ箱</h2>
       {tasks.map((t) => (
-        <div key={t.id} style={{ border: "solid 1px black" }}>
-          {t.updating ? <div>保存中</div> : ""}
-          <p>{t.title}</p>
-          <time>{new Date(t.time).toLocaleString()}</time>
-          <div>
-            <button onClick={() => restore(t.id)}>元に戻す</button>
-          </div>
-          <Link to={`/tasks/${t.id}/edit`}>詳細</Link>
-        </div>
+        <Card elevation={3} key={t.id} className={classes.root}>
+          <CardActionArea onClick={() => moveToEdit(t.id)}>
+            <CardContent>
+              <h2>
+                {t.title}
+                <IconButton>
+                  <EditIcon />
+                </IconButton>
+              </h2>
+            </CardContent>
+          </CardActionArea>
+          <CardActions disableSpacing>
+            <IconButton
+              className={classes.expand}
+              onClick={() => restore(t.id)}
+            >
+              <RestoreIcon />
+            </IconButton>
+          </CardActions>
+        </Card>
       ))}
     </div>
   );
