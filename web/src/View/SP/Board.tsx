@@ -153,11 +153,11 @@ const Continues: React.FunctionComponent<{
           <CardActionArea onClick={() => moveToEdit(t.id)}>
             <CardContent>
               {t.updating ? (
-                  <Card elevation={3}>
-                    <LinearProgress />
-                  </Card>
+                <Card elevation={3}>
+                  <LinearProgress />
+                </Card>
               ) : (
-                  ""
+                ""
               )}
               <h2>
                 {t.title}

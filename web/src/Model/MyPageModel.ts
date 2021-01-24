@@ -433,7 +433,9 @@ export async function onEditSave(
 
   const prevEdit = prev.editTask!;
   const updatingTaskSummaries = prev.taskSummaries.map((t) =>
-    t.id == prevEdit.id ? { ...t, updating: true, title: prevEdit.next.title } : t
+    t.id == prevEdit.id
+      ? { ...t, updating: true, title: prevEdit.next.title }
+      : t
   );
   const next: PageState = {
     ...prev,
