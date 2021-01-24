@@ -20,4 +20,15 @@ export interface TaskSummary {
   trash: TrashStatus;
 }
 
-export type PostTask = Omit<Task, "id">;
+export type TaskSummaries = TaskSummary[];
+
+// Omitを使うとquicktypeが動かなかった
+export interface PostTask {
+  title: string;
+  body: string;
+  time: number;
+  userID: string;
+  nickname: string;
+  progress: ProgressStatus;
+  trash: TrashStatus;
+}

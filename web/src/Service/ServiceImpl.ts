@@ -15,6 +15,14 @@ import {
   CognitoUserSession,
 } from "amazon-cognito-identity-js";
 import { Observable, Subject } from "rxjs";
+import Ajv from "ajv";
+const scheme = require("../Types/Rest.json");
+const ajv = new Ajv();
+const tasksValidator = ajv.compile({
+  ...scheme,
+  ...scheme.definitions.TaskSummaries,
+});
+const taskValidator = ajv.compile({ ...scheme, ...scheme.definitions.Task });
 
 export const currentTimeServiceImple: CurrentTimeService = () => new Date();
 
@@ -41,11 +49,6 @@ export class StorageServiceImple implements StorageService {
   }
 }
 
-// 後で
-function validate(data: any) {
-  console.assert(true);
-}
-
 export class HttpServiceImpl implements HttpService {
   private webSocket: WebSocket;
   private subject = new Subject<string>();
@@ -70,7 +73,7 @@ export class HttpServiceImpl implements HttpService {
   public async getTask(id: string): Promise<Task | null> {
     try {
       const res = await this.axios.get(`tasks/${id}`);
-      validate(res);
+      console.assert(taskValidator(res.data));
       return res.data;
     } catch (e) {
       console.log(e);
@@ -81,7 +84,7 @@ export class HttpServiceImpl implements HttpService {
   public async getTaskSummaries(): Promise<TaskSummary[] | null> {
     try {
       const res = await this.axios.get("tasks?summary=true");
-      validate(res);
+      console.assert(tasksValidator(res.data));
       return res.data;
     } catch (e) {
       console.log(e);

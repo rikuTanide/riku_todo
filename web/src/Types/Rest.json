@@ -1,0 +1,151 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "ProgressStatus": {
+            "title": "ProgressStatus",
+            "enum": [
+                "complete",
+                "continue"
+            ],
+            "type": "string"
+        },
+        "TrashStatus": {
+            "title": "TrashStatus",
+            "enum": [
+                "",
+                "trash"
+            ],
+            "type": "string"
+        },
+        "Task": {
+            "title": "Task",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "title": "id"
+                },
+                "title": {
+                    "type": "string",
+                    "title": "title"
+                },
+                "body": {
+                    "type": "string",
+                    "title": "body"
+                },
+                "time": {
+                    "type": "number",
+                    "title": "time"
+                },
+                "userID": {
+                    "type": "string",
+                    "title": "userID"
+                },
+                "nickname": {
+                    "type": "string",
+                    "title": "nickname"
+                },
+                "progress": {
+                    "$ref": "#/definitions/ProgressStatus",
+                    "title": "progress"
+                },
+                "trash": {
+                    "$ref": "#/definitions/TrashStatus",
+                    "title": "trash"
+                }
+            },
+            "required": [
+                "body",
+                "id",
+                "nickname",
+                "progress",
+                "time",
+                "title",
+                "trash",
+                "userID"
+            ]
+        },
+        "TaskSummary": {
+            "title": "TaskSummary",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "title": "id"
+                },
+                "title": {
+                    "type": "string",
+                    "title": "title"
+                },
+                "time": {
+                    "type": "number",
+                    "title": "time"
+                },
+                "progress": {
+                    "$ref": "#/definitions/ProgressStatus",
+                    "title": "progress"
+                },
+                "trash": {
+                    "$ref": "#/definitions/TrashStatus",
+                    "title": "trash"
+                }
+            },
+            "required": [
+                "id",
+                "progress",
+                "time",
+                "title",
+                "trash"
+            ]
+        },
+        "TaskSummaries": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/TaskSummary"
+            }
+        },
+        "PostTask": {
+            "title": "PostTask",
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "title": "title"
+                },
+                "body": {
+                    "type": "string",
+                    "title": "body"
+                },
+                "time": {
+                    "type": "number",
+                    "title": "time"
+                },
+                "userID": {
+                    "type": "string",
+                    "title": "userID"
+                },
+                "nickname": {
+                    "type": "string",
+                    "title": "nickname"
+                },
+                "progress": {
+                    "$ref": "#/definitions/ProgressStatus",
+                    "title": "progress"
+                },
+                "trash": {
+                    "$ref": "#/definitions/TrashStatus",
+                    "title": "trash"
+                }
+            },
+            "required": [
+                "body",
+                "nickname",
+                "progress",
+                "time",
+                "title",
+                "trash",
+                "userID"
+            ]
+        }
+    }
+}
