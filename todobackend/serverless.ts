@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { hello, websocket, postTask } from './src/functions';
+import { hello, websocket, postTask, getTasks , getTask, putTask} from './src/functions';
 
 const serverlessConfiguration: AWS = {
   service: 'todobackend',
@@ -27,7 +27,7 @@ const serverlessConfiguration: AWS = {
       {
         Effect: "Allow",
         Resource: "arn:aws:dynamodb:us-east-1:692619880522:table/tasks",
-        Action: ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:Scan"],
+        Action: ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:Scan", "dynamodb:DeleteItem"],
 
       },
       {
@@ -37,7 +37,7 @@ const serverlessConfiguration: AWS = {
       },
     ],
   },
-  functions: { hello , ...websocket, postTask }
+  functions: { hello , getTasks, getTask, putTask , ...websocket, postTask }
 }
 
 module.exports = serverlessConfiguration;
