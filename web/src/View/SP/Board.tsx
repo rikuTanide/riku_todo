@@ -152,13 +152,7 @@ const Continues: React.FunctionComponent<{
         <Card elevation={3} key={t.id} className={classes.root}>
           <CardActionArea onClick={() => moveToEdit(t.id)}>
             <CardContent>
-              {t.updating ? (
-                <Card elevation={3}>
-                  <LinearProgress />
-                </Card>
-              ) : (
-                ""
-              )}
+              {t.updating ? <LinearProgress /> : ""}
               <h2>
                 {t.title}
                 <EditIcon />
@@ -217,6 +211,7 @@ const Completes: React.FunctionComponent<{
         <Card elevation={3} key={t.id} className={classes.root}>
           <CardActionArea onClick={() => moveToEdit(t.id)}>
             <CardContent>
+              {t.updating ? <LinearProgress /> : ""}
               <h2>
                 {t.title}
                 <EditIcon />
@@ -268,6 +263,7 @@ const Trashs: React.FunctionComponent<{
         <Card elevation={3} key={t.id} className={classes.root}>
           <CardActionArea onClick={() => moveToEdit(t.id)}>
             <CardContent>
+              {t.updating ? <LinearProgress /> : ""}
               <h2>
                 {t.title}
                 <EditIcon />

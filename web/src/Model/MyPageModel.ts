@@ -534,6 +534,7 @@ export async function onListTaskComplete(
   httpService.message();
 
   if (ok) {
+    const prev = getState();
     {
       const next: PageState = {
         ...prev,
