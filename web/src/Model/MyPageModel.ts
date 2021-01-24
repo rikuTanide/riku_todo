@@ -9,6 +9,7 @@ import { TaskSummary } from "../Types/Model";
 import * as RestType from "../Types/Rest";
 import { Task } from "../Types/Rest";
 import { BehaviorSubject, Observable, Observer, Subject } from "rxjs";
+import { History } from "history";
 
 type GetState = () => PageState;
 
@@ -16,7 +17,7 @@ export function setUp(
   storageService: StorageService,
   httpService: HttpService,
   currentTimeService: CurrentTimeService,
-
+  history: History,
   userID: string,
   nickname: string
 ): [PageState, Observable<PageState>, Observer<Event>] {
@@ -31,7 +32,7 @@ export function setUp(
   const stateSubject = new BehaviorSubject<PageState>(defaultState);
   const eventSubject = new Subject<Event>();
 
-  const getState  = stateSubject.getValue;
+  const getState = () => stateSubject.getValue();
 
   const handler = (event: Event) => {
     openNewTaskPage(getState, event, stateSubject, storageService);
@@ -44,6 +45,7 @@ export function setUp(
       storageService,
       httpService,
       currentTimeService,
+      history,
       userID,
       nickname
     );
@@ -162,10 +164,13 @@ export async function onNewTaskSubmit(
   storageService: StorageService,
   httpService: HttpService,
   currentTimeService: CurrentTimeService,
+  history: History,
   userID: string,
   nickname: string
 ) {
   if (event.type != "new task / submit") return false;
+  history.push("/");
+
   const prev = getState();
   {
     const next: PageState = {

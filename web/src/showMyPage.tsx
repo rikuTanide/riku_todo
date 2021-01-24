@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { CurrentTimeService, StorageService, User } from "./Service/Service";
 import Axios, { AxiosInstance } from "axios";
 import { useMediaQuery } from "react-responsive";
-import { HashRouter } from "react-router-dom";
+import { HashRouter, Router, useHistory } from "react-router-dom";
 import { setUp } from "./Model/MyPageModel";
 import {
   currentTimeServiceImple,
@@ -13,13 +13,27 @@ import {
 import { PageState } from "./Types/State";
 import { Event } from "./Types/Event";
 import { Observable, Observer } from "rxjs";
+import { History } from "history";
 
 const PC = React.lazy(() => import("./View/PC/App"));
 const SP = React.lazy(() => import("./View/SP/App"));
 
 export function showMyPage(user: User) {
+  ReactDOM.render(
+    <React.StrictMode>
+      <HashRouter>
+        <RouterWrapper user={user} />
+      </HashRouter>
+    </React.StrictMode>,
+    document.getElementById("root")
+  );
+}
+
+// historyを取得するため
+const RouterWrapper: React.FunctionComponent<{ user: User }> = (props) => {
+  const user = props.user;
   const axios = Axios.create({
-    baseURL: "https://apx6s3pmdd.execute-api.us-east-1.amazonaws.com/dev/",
+    baseURL: "https://8p31a5pvr0.execute-api.us-east-1.amazonaws.com/dev/",
     headers: { Authorization: user.idToken },
     timeout: 10000,
   });
@@ -27,39 +41,48 @@ export function showMyPage(user: User) {
   const storageService: StorageService = new StorageServiceImple();
   const httpService = new HttpServiceImpl(axios);
   const currentTimeService: CurrentTimeService = currentTimeServiceImple;
+  const history = useHistory();
 
   const [defaultState, stateObservable, eventObserver] = setUp(
     storageService,
     httpService,
     currentTimeService,
+    history,
     user.userID,
     user.nickname
   );
 
-  ReactDOM.render(
-    <React.StrictMode>
-      <Wrapper
-        defaultState={defaultState}
-        observable={stateObservable}
-        observer={eventObserver}
-      />
-    </React.StrictMode>,
-    document.getElementById("root")
+  return (
+    <QuerySelectorWrapper
+      defaultState={defaultState}
+      observable={stateObservable}
+      observer={eventObserver}
+      history={history}
+    />
   );
-}
+};
 
-export const Wrapper: React.FunctionComponent<{
+const QuerySelectorWrapper: React.FunctionComponent<{
   defaultState: PageState;
   observable: Observable<PageState>;
   observer: Observer<Event>;
+  history: History;
 }> = (props) => {
   const isSmartPhone = useMediaQuery({ maxDeviceWidth: 768 });
+  const [state, setState] = useState<PageState>(props.defaultState);
+
+  useEffect(() => {
+    const ss = props.observable.subscribe((s) => setState(s));
+    return () => ss.unsubscribe();
+  });
 
   return (
-    <HashRouter>
-      <React.Suspense fallback={<div>loading</div>}>
-        {isSmartPhone ? <SP {...props} /> : <PC {...props} />}
-      </React.Suspense>
-    </HashRouter>
+    <React.Suspense fallback={<div>loading</div>}>
+      {isSmartPhone ? (
+        <SP {...props} />
+      ) : (
+        <PC state={state} observer={props.observer} />
+      )}
+    </React.Suspense>
   );
 };

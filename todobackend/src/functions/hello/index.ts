@@ -1,5 +1,3 @@
-
-
 export default {
   handler: `src/functions/hello/handler.main`,
   events: [

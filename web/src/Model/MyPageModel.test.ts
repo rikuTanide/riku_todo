@@ -5,6 +5,7 @@ import { Subject } from "rxjs";
 import { map, toArray } from "rxjs/operators";
 import { onNewTaskSubmit, onTitleInput, openNewTaskPage } from "./MyPageModel";
 import { PostTask, Task, TaskSummary } from "../Types/Rest";
+import { createMemoryHistory } from "history";
 
 const defaultState: PageState = {
   taskSummaries: [],
@@ -14,6 +15,8 @@ const defaultState: PageState = {
     submitting: false,
   },
 };
+
+const createDefaultState = () => defaultState;
 
 describe("新規タスク作成ページ", () => {
   it("ページを開いた", async () => {
@@ -32,7 +35,7 @@ describe("新規タスク作成ページ", () => {
       toArray()
     );
     const p = s.toPromise();
-    openNewTaskPage(defaultState, event, observer, new storageService());
+    openNewTaskPage(createDefaultState, event, observer, new storageService());
     observer.complete();
     expect(await p).toStrictEqual([
       {
@@ -59,7 +62,7 @@ describe("新規タスク作成ページ", () => {
       toArray()
     );
     const p = s.toPromise();
-    onTitleInput(defaultState, event, observer, new storageService());
+    onTitleInput(createDefaultState, event, observer, new storageService());
     observer.complete();
     expect(await p).toStrictEqual(["タイトルA"]);
     expect(putNewTaskSpy.mock.calls[0][0]).toBe("タイトルA");
@@ -93,6 +96,8 @@ describe("新規タスク作成ページ", () => {
       return new Class();
     }
 
+    const history = createMemoryHistory();
+
     it("保存成功", async () => {
       const event: Event = {
         type: "new task / submit",
@@ -105,12 +110,13 @@ describe("新規タスク作成ページ", () => {
       );
       const p = s.toPromise();
       await onNewTaskSubmit(
-        defaultState,
+        createDefaultState,
         event,
         observer,
         getStorageServiceMock(),
         createHttpServiceMock(true),
         () => new Date(2020, 0, 1),
+        history,
         "user1",
         "nickname"
       );
@@ -129,12 +135,13 @@ describe("新規タスク作成ページ", () => {
       );
       const p = s.toPromise();
       await onNewTaskSubmit(
-        defaultState,
+        createDefaultState,
         event,
         observer,
         getStorageServiceMock(),
         createHttpServiceMock(false),
         () => new Date(2020, 0, 1),
+        history,
         "user1",
         "nickname"
       );
