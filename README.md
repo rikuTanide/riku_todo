@@ -13,6 +13,32 @@ yarn install
 yarn start or yarn test
 ```
 
+## 技術選定と全体のアーキテクチャ
+
+ - ログイン機能はCognito
+ - REST APIはAmazon API GatewayとAWS Lambda (Node.js)
+ - DBはAmazon DynamoDB
+ - クラウドの設定はServerless Framework 
+ - WebSocketのエンドポイントも同上
+ - WebフロントエンドはReact/TypeScript
+ - formatはPrettier
+ - テストはJest
+ - HttpClientはAuthorizationの設定やTimeoutの設定を共通化しやすい
+   Axiosを使う
+ - AjvでサーバーからのJSONをバリデーションする
+ - 状態管理・イベントハンドリングはRxJS
+
+### フロントエンドのアーキテクチャ
+
+ - UIはstate(src/Types/State.ts)に対して参照等価である
+ - ビジネスロジックはRxJSを使って最新のstateをobserveする
+ - UIはReact Hooksを使いビジネスロジックからstateをsubscribeする
+ - UIは操作に応じてEvent(src/Types/Event.ts)を発出する
+ - ビジネスロジック(src/Types/Model.ts)は現在のstateとeventをもとに次のstateを作成しUIに送信する
+ - Model.tsはすべてのハンドラにイベントを送り、各ハンドラは自分宛ての場合にのみ処理をする
+   （自分のプロダクトではよりここを抽象化しているが、今回は見た目がわかりやすいようにこうした）
+
+
 ## 仕様
 
 ### 機能
@@ -53,7 +79,7 @@ yarn start or yarn test
 
 ### Validation/エラーハンドル
  - サーバーから来たデータをajvで検証
- - ネットワークのタイムアウト処理
+ - ネットワークは10秒でタイムアウトとする
  - 書き込み中の文章はlocalStorageに保存し  
    リロードしても残るようにする
 
