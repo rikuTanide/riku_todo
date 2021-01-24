@@ -10,14 +10,14 @@ import * as RestType from "../Types/Rest";
 import { Task } from "../Types/Rest";
 import { BehaviorSubject, Observable, Observer, Subject } from "rxjs";
 
-function setUp(
+export function setUp(
   storageService: StorageService,
   httpService: HttpService,
   currentTimeService: CurrentTimeService,
 
   userID: string,
   nickname: string
-): [PageState, Observable<PageState>, Observable<Event>] {
+): [PageState, Observable<PageState>, Observer<Event>] {
   const defaultState: PageState = {
     taskSummaries: [],
     newTask: {
@@ -100,7 +100,13 @@ function setUp(
   };
 
   eventSubject.subscribe((e) => handler(e));
-
+  doUpdateTasks(
+    stateSubject.value,
+    { type: "do update tasks" },
+    stateSubject,
+    httpService,
+    storageService
+  );
   return [stateSubject.value, stateSubject, eventSubject];
 }
 
