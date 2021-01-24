@@ -1,7 +1,7 @@
 import { Observer } from "rxjs";
 import { PostTask, Task, TaskSummary } from "../Types/Rest";
-import { PageState } from "../Types/State";
-import { Event } from "../Types/Event";
+import { LoginPageState, PageState } from "../Types/State";
+import { Event, LoginPageEvent } from "../Types/Event";
 
 export type CurrentTimeService = () => Date;
 
@@ -33,4 +33,9 @@ export interface LoginService {
   ): Promise<boolean>;
   login(mailAddr: string, password: string): Promise<boolean>;
   logout(): void;
+  reload(): void;
 }
+
+export type LoginPageStateObserver = Observer<LoginPageState>;
+export type LoginPageEventEmitter = (event: LoginPageEventEmitter) => void;
+export type LoginPageEventStream = Observer<LoginPageEvent>;

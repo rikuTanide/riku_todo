@@ -19,9 +19,11 @@ export type Event =
   | { type: "do update tasks" };
 
 export type LoginPageEvent =
+  | { type: "login / switch to sign up" }
   | { type: "login / mail addr"; mailAddr: string }
   | { type: "login / password"; password: string }
   | { type: "login / try login" }
+  | { type: "sing up / switch to login"; mailAddr: string }
   | { type: "sign up / mail add"; mailAddr: string }
   | { type: "sign up / nickname"; nickname: string }
   | { type: "sign up / password"; password: string }
