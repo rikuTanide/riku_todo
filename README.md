@@ -10,6 +10,7 @@ ToDoアプリ
  - ToDo作成
  - ToDo閲覧
  - ToDo編集
+ - ログアウト
 
 ### ToDoの項目
  - タイトル
@@ -102,3 +103,7 @@ PUT /tasks/:task_id
 
 ### WebSocketエンドポイント
 何かメッセージを送ればすべてのWebSocket Connectionに空のメッセージが送られるようにする
+
+### ログアウト
+/logout
+Clear-Site-Dataを発行するためのエンドポイント
