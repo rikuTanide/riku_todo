@@ -18,7 +18,7 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import TextField from "@material-ui/core/TextField";
-
+import SaveIcon from "@material-ui/icons/Save";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -88,6 +88,7 @@ export const EditTask: React.FunctionComponent<{
               詳細
             </Typography>
             <Button color="inherit" onClick={onSubmit}>
+              <SaveIcon />
               保存
             </Button>
           </Toolbar>
