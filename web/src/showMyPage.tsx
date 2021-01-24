@@ -29,7 +29,7 @@ export function showMyPage(user: User) {
     headers: { Authorization: user.idToken },
     timeout: 10000,
   });
-  const httpService = new HttpServiceImpl(axios);
+  const httpService: HttpService = new HttpServiceImpl(axios);
 
   ReactDOM.render(
     <React.StrictMode>
@@ -61,7 +61,7 @@ const RouterWrapper: React.FunctionComponent<{
     user.nickname
   );
 
-  props.httpService.onMessage.subscribe((_) =>
+  props.httpService.onMessage().subscribe((_) =>
     eventObserver.next({
       type: "do update tasks",
     })
@@ -94,7 +94,7 @@ const QuerySelectorWrapper: React.FunctionComponent<{
   return (
     <React.Suspense fallback={<div>loading</div>}>
       {isSmartPhone ? (
-        <SP {...props} />
+        <SP state={state} observer={props.observer} />
       ) : (
         <PC state={state} observer={props.observer} />
       )}

@@ -49,7 +49,7 @@ export class HttpServiceImpl implements HttpService {
   private webSocket: WebSocket;
   private subject = new Subject<string>();
 
-  public get onMessage(): Observable<string> {
+  public onMessage(): Observable<string> {
     return this.subject;
   }
 
