@@ -20,3 +20,17 @@ export interface EditTask {
 }
 
 export type Toast = Event;
+
+export type LoginPageType = "login" | "sign up";
+
+export interface LoginPageState {
+  type: LoginPageType;
+  loginMailAddr: string;
+  loginPassword: string;
+  signUpMailAddr: string;
+  signUpNickname: string;
+  signUpPassword: string;
+
+  hasError: boolean;
+  loading: boolean;
+}

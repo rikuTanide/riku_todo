@@ -24,3 +24,13 @@ export interface HttpService {
 export type StateObserver = Observer<PageState>;
 export type EventEmitter = (event: Event) => void;
 export type EventStream = Observer<Event>;
+
+export interface LoginService {
+  signUp(
+    mailAddr: string,
+    nickname: string,
+    password: string
+  ): Promise<boolean>;
+  login(mailAddr: string, password: string): Promise<boolean>;
+  logout(): void;
+}

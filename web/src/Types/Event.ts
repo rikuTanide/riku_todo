@@ -17,3 +17,12 @@ export type Event =
   | { type: "list / restore"; taskID: string }
   | { type: "on websocket message" }
   | { type: "do update tasks" };
+
+export type LoginPageEvent =
+  | { type: "login / mail addr"; mailAddr: string }
+  | { type: "login / password"; password: string }
+  | { type: "login / try login" }
+  | { type: "sign up / mail add"; mailAddr: string }
+  | { type: "sign up / nickname"; nickname: string }
+  | { type: "sign up / password"; password: string }
+  | { type: "sign up / try sign up" };
