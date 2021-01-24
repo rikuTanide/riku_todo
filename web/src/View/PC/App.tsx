@@ -6,7 +6,7 @@ import { Switch, Link, Route, useHistory } from "react-router-dom";
 import { NewTask } from "./NewTask";
 import { Board } from "./Board";
 import { EditTask } from "./EditTask";
-import { Toast } from "./Toast";
+import { Toast } from "../SP/Toast";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -161,25 +161,12 @@ export const App: React.FunctionComponent<{
       </main>
       <Route path="/new" render={() => <NewTask {...props} />} />
       <Route
-          path="/tasks/:taskID/edit"
-          render={() => <EditTask {...props} />}
+        path="/tasks/:taskID/edit"
+        render={() => <EditTask {...props} />}
       />
+      {toast ? <Toast toast={toast} observer={props.observer} /> : ""}
     </div>
   );
 };
 
 export default App;
-
-/*
-      <Board
-        submitting={props.state.newTask.submitting}
-        tasks={props.state.taskSummaries}
-        observer={props.observer}
-      />
-      <Route path="/" exact render={() => <Link to="/new">新規作成</Link>} />
-      <Route
-        path="/tasks/:taskID/edit"
-        render={() => <EditTask {...props} />}
-      />
-      {toast ? <Toast toast={toast} observer={props.observer} /> : ""}
- */
