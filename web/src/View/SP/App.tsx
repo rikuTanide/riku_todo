@@ -8,6 +8,17 @@ import { Board } from "./Board";
 import { NewTask } from "./NewTask";
 import { EditTask } from "./EditTask";
 import { Toast } from "./Toast";
+import { makeStyles } from "@material-ui/core/styles";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
+
+const useStyles = makeStyles((theme) => ({
+    fab: {
+        position: 'fixed',
+        bottom: theme.spacing(2),
+        right: theme.spacing(2),
+    },
+}));
 
 // スマホページは新規作成画面と編集画面を全画面表示するので
 // RouteにExactを付ける
@@ -17,6 +28,7 @@ export const App: React.FunctionComponent<{
 }> = (props) => {
   const history = useHistory();
   const toast = props.state.toast;
+  const classes = useStyles();
 
   return (
     <div>
@@ -39,7 +51,13 @@ export const App: React.FunctionComponent<{
         render={() => <EditTask {...props} />}
       />
       {toast ? <Toast toast={toast} observer={props.observer} /> : ""}
-      <Link to="/new">新規作成</Link>
+      <Route path="/" exact>
+        <div className={classes.fab}>
+          <Fab color="primary" aria-label="add" onClick={()=>history.push("/new")}>
+              <AddIcon />
+          </Fab>
+        </div>
+      </Route>
     </div>
   );
 };

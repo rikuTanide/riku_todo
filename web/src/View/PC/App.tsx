@@ -23,7 +23,9 @@ export const App: React.FunctionComponent<{
         tasks={props.state.taskSummaries}
         observer={props.observer}
       />
-      <Link to="/new">新規作成</Link>
+      <Route path="/" exact render={() => <Link to="/new">新規作成</Link>}>
+        {" "}
+      </Route>
       <Route path="/new" render={() => <NewTask {...props} />} />
       <Route
         path="/tasks/:taskID/edit"
