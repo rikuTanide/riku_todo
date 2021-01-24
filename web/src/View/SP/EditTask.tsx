@@ -57,6 +57,7 @@ export const EditTask: React.FunctionComponent<{
 
   if (!editTask) return <div>loading</div>;
   if (editTask.id != taskID) return <div>loading</div>;
+  if (editTask.loading) return <div>loading</div>;
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();

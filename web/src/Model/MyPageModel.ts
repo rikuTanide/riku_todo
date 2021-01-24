@@ -303,6 +303,7 @@ export async function onDetailFetch(
   const task = await httpService.getTask(event.taskID);
 
   if (!task) {
+    const prev = getState();
     const next: PageState = {
       ...prev,
       editTask: undefined,
@@ -976,7 +977,6 @@ export async function doUpdateTasks(
   const prev = getState();
   const next: PageState = {
     ...prev,
-    editTask: undefined,
     taskSummaries: tasks,
   };
   observer.next(next);
