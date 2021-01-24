@@ -90,6 +90,7 @@ GET /tasks?summary=true
  
 ### タスク作成
 POST /tasks
+成功した場合は201
 
 ### タスク詳細
 GET /tasks/:task_id
@@ -97,6 +98,7 @@ GET /tasks/:task_id
 ### タスク編集
 PUT /tasks/:task_id
 タイトル・本文・進捗変更などは同じAPIを使う
+成功した場合は200
 
 ### WebSocketエンドポイント
 何かメッセージを送ればすべてのWebSocket Connectionに空のメッセージが送られるようにする

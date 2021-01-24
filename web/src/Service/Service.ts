@@ -16,7 +16,7 @@ export interface HttpService {
   message(): void;
 
   getTaskSummaries(): Promise<TaskSummary[] | null>;
-  getTask(): Promise<TaskSummary | null>;
+  getTask(id: string): Promise<TaskSummary | null>;
   postTask(task: PostTask): Promise<boolean>;
   putTask(task: Task): Promise<boolean>;
 }
