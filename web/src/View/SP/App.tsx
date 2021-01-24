@@ -1,9 +1,8 @@
 import React from "react";
 import { PageState } from "../../Types/State";
-import { Observable, Observer } from "rxjs";
+import { Observer } from "rxjs";
 import { Event } from "../../Types/Event";
-import { Link, Route } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import { Route, useHistory } from "react-router-dom";
 import { Board } from "./Board";
 import { NewTask } from "./NewTask";
 import { EditTask } from "./EditTask";

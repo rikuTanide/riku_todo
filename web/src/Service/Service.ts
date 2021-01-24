@@ -1,7 +1,5 @@
-import { Observable, Observer } from "rxjs";
+import { Observable } from "rxjs";
 import { PostTask, Task, TaskSummary } from "../Types/Rest";
-import { LoginPageState, PageState } from "../Types/State";
-import { Event, LoginPageEvent } from "../Types/Event";
 
 export type CurrentTimeService = () => Date;
 

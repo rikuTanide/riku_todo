@@ -6,9 +6,9 @@ import {
   StorageService,
   User,
 } from "./Service/Service";
-import Axios, { AxiosInstance } from "axios";
+import Axios from "axios";
 import { useMediaQuery } from "react-responsive";
-import { HashRouter, Router, useHistory } from "react-router-dom";
+import { HashRouter, useHistory } from "react-router-dom";
 import { setUp } from "./Model/MyPageModel";
 import {
   currentTimeServiceImple,

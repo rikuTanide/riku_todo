@@ -4,7 +4,7 @@ import { HttpService, StorageService } from "../Service/Service";
 import { Subject } from "rxjs";
 import { map, toArray } from "rxjs/operators";
 import { onNewTaskSubmit, onTitleInput, openNewTaskPage } from "./MyPageModel";
-import { PostTask, Task, TaskSummary } from "../Types/Rest";
+import { PostTask, TaskSummary } from "../Types/Rest";
 import { createMemoryHistory } from "history";
 
 const defaultState: PageState = {

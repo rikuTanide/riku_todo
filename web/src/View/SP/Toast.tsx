@@ -2,13 +2,12 @@ import React from "react";
 import { Toast as ToastState } from "../../Types/State";
 import { Observer } from "rxjs";
 import { Event } from "../../Types/Event";
-import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
 import Alert from "@material-ui/lab/Alert";
 import CancelIcon from "@material-ui/icons/Cancel";
 import UndoIcon from "@material-ui/icons/Undo";
+
 export const Toast: React.FunctionComponent<{
   toast: ToastState;
   observer: Observer<Event>;

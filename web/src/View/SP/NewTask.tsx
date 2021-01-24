@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { PageState } from "../../Types/State";
-import { Observable, Observer } from "rxjs";
+import { Observer } from "rxjs";
 import { Event } from "../../Types/Event";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";

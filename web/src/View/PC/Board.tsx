@@ -1,11 +1,8 @@
 import React from "react";
-import { PageState } from "../../Types/State";
 import { Observer } from "rxjs";
 import { Event } from "../../Types/Event";
-import { Link } from "react-router-dom";
 import { TaskSummary } from "../../Types/Model";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import { Completes, Continues, Trashs } from "../SP/Board";
 
 // 各ボードはタスク一覧に対して冪等なので、これをメモ化の単位とする。

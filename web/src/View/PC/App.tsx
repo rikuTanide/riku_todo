@@ -1,8 +1,8 @@
 import React from "react";
-import { PageState, Toast as ToastState } from "../../Types/State";
-import { Observable, Observer } from "rxjs";
+import { PageState } from "../../Types/State";
+import { Observer } from "rxjs";
 import { Event } from "../../Types/Event";
-import { Switch, Link, Route, useHistory } from "react-router-dom";
+import { Route, useHistory } from "react-router-dom";
 import { NewTask } from "./NewTask";
 import { Board } from "./Board";
 import { EditTask } from "./EditTask";
@@ -10,22 +10,14 @@ import { Toast } from "../SP/Toast";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Drawer from "@material-ui/core/Drawer";
-import Box from "@material-ui/core/Box";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
-import Badge from "@material-ui/core/Badge";
 import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import NoteAddIcon from "@material-ui/icons/NoteAdd";
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({

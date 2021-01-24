@@ -1,34 +1,17 @@
 import React from "react";
-import { PageState } from "../../Types/State";
 import { Observer } from "rxjs";
 import { Event } from "../../Types/Event";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { TaskSummary } from "../../Types/Model";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  useParams,
-  useHistory,
-  useLocation,
-} from "react-router-dom";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
-import { red } from "@material-ui/core/colors";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { CardActionArea } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";

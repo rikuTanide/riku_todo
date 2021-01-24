@@ -1,11 +1,8 @@
-import {} from "jest";
 import { LoginPageEvent as Event } from "../Types/Event";
 import { LoginPageState as State } from "../Types/State";
 import { onLoginPageMailAddr, onTryLogin, onTrySignUp } from "./LoginpageModel";
 import { Subject } from "rxjs";
-import { TestScheduler } from "rxjs/testing";
-import { toArray } from "rxjs/operators";
-import { map } from "rxjs/operators";
+import { map, toArray } from "rxjs/operators";
 import { LoginService } from "../Service/Service";
 
 const defaultState: State = {

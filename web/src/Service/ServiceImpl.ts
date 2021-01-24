@@ -8,13 +8,14 @@ import {
 import { AxiosInstance } from "axios";
 import { PostTask, Task, TaskSummary } from "../Types/Rest";
 import {
-  CognitoUserPool,
-  CognitoUser,
   AuthenticationDetails,
-  CognitoUserSession,
+  CognitoUser,
   CognitoUserAttribute,
+  CognitoUserPool,
+  CognitoUserSession,
 } from "amazon-cognito-identity-js";
 import { Observable, Subject } from "rxjs";
+
 export const currentTimeServiceImple: CurrentTimeService = () => new Date();
 
 export class StorageServiceImple implements StorageService {

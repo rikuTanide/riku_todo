@@ -1,24 +1,16 @@
 import React, { useEffect } from "react";
 import { PageState } from "../../Types/State";
-import { Observable, Observer } from "rxjs";
+import { Observer } from "rxjs";
 import { Event } from "../../Types/Event";
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  useParams,
-  useHistory,
-  useLocation,
-} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
 import TextField from "@material-ui/core/TextField";
 import SaveIcon from "@material-ui/icons/Save";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,

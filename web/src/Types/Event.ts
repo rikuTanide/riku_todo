@@ -1,4 +1,4 @@
-import { ProgressStatus, Task, TrashStatus } from "./Rest";
+import { ProgressStatus, TrashStatus } from "./Rest";
 
 export type Event =
   | { type: "new task / open" }

@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { PageState } from "../../Types/State";
-import { Observable, Observer } from "rxjs";
+import { Observer } from "rxjs";
 import { Event } from "../../Types/Event";
 import Modal from "@material-ui/core/Modal";
 import { makeStyles } from "@material-ui/core/styles";
