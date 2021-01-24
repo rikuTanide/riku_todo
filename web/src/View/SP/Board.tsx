@@ -108,7 +108,7 @@ const useCardStyles = makeStyles({
   },
 });
 
-const Continues: React.FunctionComponent<{
+export const Continues: React.FunctionComponent<{
   submitting: boolean;
   tasks: TaskSummary[];
   observer: Observer<Event>;
@@ -176,7 +176,7 @@ const Continues: React.FunctionComponent<{
   );
 };
 
-const Completes: React.FunctionComponent<{
+export const Completes: React.FunctionComponent<{
   tasks: TaskSummary[];
   observer: Observer<Event>;
 }> = (props) => {
@@ -235,7 +235,7 @@ const Completes: React.FunctionComponent<{
   );
 };
 
-const Trashs: React.FunctionComponent<{
+export const Trashs: React.FunctionComponent<{
   tasks: TaskSummary[];
   observer: Observer<Event>;
 }> = (props) => {
