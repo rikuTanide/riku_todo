@@ -33,6 +33,9 @@ import { CardActionArea } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
 import RestoreIcon from "@material-ui/icons/Restore";
+import LinearProgress from '@material-ui/core/LinearProgress';
+
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -138,8 +141,8 @@ const Continues: React.FunctionComponent<{
     .sort((t1, t2) => (t1.time > t2.time ? -1 : 1));
   return (
     <div>
-      {props.submitting ? "作成中" : ""}
       <h2>進行中</h2>
+      {props.submitting ? <Card elevation={3}><LinearProgress /></Card> : ""}
       {tasks.map((t) => (
         <Card elevation={3} key={t.id} className={classes.root}>
           <CardActionArea onClick={() => moveToEdit(t.id)}>
