@@ -23,16 +23,16 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
-import EditIcon from '@material-ui/icons/Edit';
+import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
 import { red } from "@material-ui/core/colors";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ShareIcon from "@material-ui/icons/Share";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { CardActionArea } from "@material-ui/core";
-import DeleteIcon from '@material-ui/icons/Delete';
-import CheckIcon from '@material-ui/icons/Check';
-
+import DeleteIcon from "@material-ui/icons/Delete";
+import CheckIcon from "@material-ui/icons/Check";
+import RestoreIcon from "@material-ui/icons/Restore";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -144,18 +144,22 @@ const Continues: React.FunctionComponent<{
         <Card elevation={3} key={t.id} className={classes.root}>
           <CardActionArea onClick={() => moveToEdit(t.id)}>
             <CardContent>
-              <h2>{t.title}
-                <IconButton >
+              <h2>
+                {t.title}
+                <IconButton>
                   <EditIcon />
                 </IconButton>
               </h2>
             </CardContent>
           </CardActionArea>
           <CardActions disableSpacing>
-            <IconButton  onClick={() => trash(t.id)}>
+            <IconButton onClick={() => trash(t.id)}>
               <DeleteIcon />
             </IconButton>
-            <IconButton className={classes.expand}  onClick={() => complete(t.id)}>
+            <IconButton
+              className={classes.expand}
+              onClick={() => complete(t.id)}
+            >
               <CheckIcon />
             </IconButton>
           </CardActions>
@@ -169,6 +173,9 @@ const Completes: React.FunctionComponent<{
   tasks: TaskSummary[];
   observer: Observer<Event>;
 }> = (props) => {
+  const classes = useCardStyles();
+  const history = useHistory();
+
   function toContinue(id: string) {
     props.observer.next({
       type: "list / continue",
@@ -183,23 +190,40 @@ const Completes: React.FunctionComponent<{
     });
   }
 
+  function moveToEdit(id: string) {
+    history.push(`/tasks/${id}/edit`);
+  }
+
   const tasks = props.tasks
     .filter((t) => t.progress == "complete" && t.trash == "")
     .sort((t1, t2) => (t1.time > t2.time ? -1 : 1));
   return (
-    <div style={{ border: "solid 1px black" }}>
+    <div>
       <h2>完了</h2>
       {tasks.map((t) => (
-        <div key={t.id} style={{ border: "solid 1px black" }}>
-          {t.updating ? <div>保存中</div> : ""}
-          <p>{t.title}</p>
-          <time>{new Date(t.time).toLocaleString()}</time>
-          <div>
-            <button onClick={() => toContinue(t.id)}>未完了</button>
-            <button onClick={() => trash(t.id)}>削除</button>
-          </div>
-          <Link to={`/tasks/${t.id}/edit`}>詳細</Link>
-        </div>
+        <Card elevation={3} key={t.id} className={classes.root}>
+          <CardActionArea onClick={() => moveToEdit(t.id)}>
+            <CardContent>
+              <h2>
+                {t.title}
+                <IconButton>
+                  <EditIcon />
+                </IconButton>
+              </h2>
+            </CardContent>
+          </CardActionArea>
+          <CardActions disableSpacing>
+            <IconButton onClick={() => trash(t.id)}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton
+              className={classes.expand}
+              onClick={() => toContinue(t.id)}
+            >
+              <RestoreIcon />
+            </IconButton>
+          </CardActions>
+        </Card>
       ))}
     </div>
   );
