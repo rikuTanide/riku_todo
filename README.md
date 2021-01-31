@@ -3,7 +3,7 @@ ToDoアプリ
 
 ## 動作確認方法
 ### 公開アプリ
-https://ricktodo.s3-ap-northeast-1.amazonaws.com/index.html
+http://ricktodo.s3-website-ap-northeast-1.amazonaws.com/
 
 ### ローカル
 ```
