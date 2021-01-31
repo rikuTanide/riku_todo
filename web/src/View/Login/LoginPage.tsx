@@ -89,6 +89,10 @@ export const LoginPage: React.FunctionComponent<{
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
+        <hgroup>
+          <h2>タスク管理アプリ</h2>
+          <h1>Rick ToDo</h1>
+        </hgroup>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
@@ -175,6 +179,10 @@ export const SignUpPage: React.FunctionComponent<{
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
+        <hgroup>
+          <h2>タスク管理アプリ</h2>
+          <h1>Rick ToDo</h1>
+        </hgroup>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
