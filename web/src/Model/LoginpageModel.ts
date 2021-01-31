@@ -8,7 +8,7 @@ import {
   Subject,
 } from "rxjs";
 
-export function setUp(
+export function createHandler(
   loginService: LoginService
 ): [State, RxObserver<LoginPageEvent>, Observable<LoginPageState>] {
   const defaultState: State = {

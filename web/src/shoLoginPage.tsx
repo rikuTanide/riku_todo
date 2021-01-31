@@ -1,11 +1,11 @@
 import { LoginService } from "./Service/Service";
-import { setUp } from "./Model/LoginpageModel";
+import { createHandler } from "./Model/LoginpageModel";
 import ReactDOM from "react-dom";
 import React from "react";
 import { LoginOrSignUpPage } from "./View/Login/LoginPage";
 
 export function showLoginPage(loginService: LoginService) {
-  const [state, observer, observable] = setUp(loginService);
+  const [state, observer, observable] = createHandler(loginService);
 
   ReactDOM.render(
     <React.StrictMode>

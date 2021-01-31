@@ -10,7 +10,7 @@ import {
 import Axios from "axios";
 import MediaQuery, { useMediaQuery } from "react-responsive";
 import { HashRouter, useHistory } from "react-router-dom";
-import { setUp } from "./Model/MyPageModel";
+import { createHandler } from "./Model/MyPageModel";
 import {
   currentTimeServiceImple,
   HttpServiceImpl,
@@ -67,7 +67,7 @@ const BindBusinessLogicWrapper: React.FunctionComponent<{
   const storageService: StorageService = new StorageServiceImple();
   const currentTimeService: CurrentTimeService = currentTimeServiceImple;
 
-  const [defaultState, stateObservable, eventObserver] = setUp(
+  const [defaultState, stateObservable, eventObserver] = createHandler(
     storageService,
     props.httpService,
     currentTimeService,

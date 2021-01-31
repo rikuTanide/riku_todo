@@ -14,7 +14,7 @@ import { History } from "history";
 
 type GetState = () => PageState;
 
-export function setUp(
+export function createHandler(
   storageService: StorageService,
   httpService: HttpService,
   currentTimeService: CurrentTimeService,
