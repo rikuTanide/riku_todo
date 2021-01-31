@@ -8,7 +8,7 @@ import {
   User,
 } from "./Service/Service";
 import Axios from "axios";
-import MediaQuery, { useMediaQuery } from "react-responsive";
+import { useMediaQuery } from "react-responsive";
 import { HashRouter, useHistory } from "react-router-dom";
 import { createHandler } from "./Model/MembersPageModel";
 import {
@@ -24,7 +24,7 @@ import { History } from "history";
 const PC = React.lazy(() => import("./View/Members/PC/App"));
 const SP = React.lazy(() => import("./View/Members/SP/App"));
 
-export function showMyPage(user: User, loginService: LoginService) {
+export function showMembersPage(user: User, loginService: LoginService) {
   const axios = Axios.create({
     baseURL: "https://8p31a5pvr0.execute-api.us-east-1.amazonaws.com/dev/",
     headers: { Authorization: user.idToken },

@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import React from "react";
 import { NonMembersPage } from "./View/NonMembers/NonMembersPage";
 
-export function showLoginPage(loginService: LoginService) {
+export function showNonMembersPage(loginService: LoginService) {
   const [state, observer, observable] = createHandler(loginService);
 
   ReactDOM.render(
