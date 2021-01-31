@@ -17,7 +17,8 @@ import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
 import MenuIcon from "@material-ui/icons/Menu";
 import NoteAddIcon from "@material-ui/icons/NoteAdd";
-
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import { MyPage } from "./MyPage";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -138,6 +139,11 @@ export const App: React.FunctionComponent<{
           </Typography>
           <IconButton color="inherit" onClick={() => history.push("/new")}>
             <NoteAddIcon />
+            新規作成
+          </IconButton>
+          <IconButton color="inherit" onClick={() => history.push("/mypage")}>
+            <AccountCircleIcon />
+            マイページ
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -152,6 +158,7 @@ export const App: React.FunctionComponent<{
         </Container>
       </main>
       <Route path="/new" render={() => <NewTask {...props} />} />
+      <Route path="/mypage" render={() => <MyPage {...props} />} />
       <Route
         path="/tasks/:taskID/edit"
         render={() => <EditTask {...props} />}

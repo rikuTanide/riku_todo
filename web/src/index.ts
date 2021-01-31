@@ -7,7 +7,7 @@ import { showLoginPage } from "./shoLoginPage";
 async function main() {
   const loginService: LoginService = new LoginServiceImple();
   if (await loginService.isLoggedIn()) {
-    showMyPage(await loginService.getCurrentUser());
+    showMyPage(await loginService.getCurrentUser(), loginService);
   } else {
     showLoginPage(loginService);
   }

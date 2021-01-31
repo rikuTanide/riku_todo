@@ -134,7 +134,9 @@ export class LoginServiceImple implements LoginService {
     });
   }
 
-  public logout(): void {}
+  public logout() {
+    this.pool.getCurrentUser()?.signOut();
+  }
 
   public reload(): void {
     window.location.reload();
@@ -220,5 +222,9 @@ export class LoginServiceImple implements LoginService {
         { clientMetadata: {} }
       );
     });
+  }
+
+  public goTop(): void {
+    window.location.href = "/";
   }
 }

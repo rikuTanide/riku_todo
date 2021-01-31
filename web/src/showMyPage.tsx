@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import {
   CurrentTimeService,
   HttpService,
+  LoginService,
   StorageService,
   User,
 } from "./Service/Service";
@@ -23,7 +24,7 @@ import { History } from "history";
 const PC = React.lazy(() => import("./View/PC/App"));
 const SP = React.lazy(() => import("./View/SP/App"));
 
-export function showMyPage(user: User) {
+export function showMyPage(user: User, loginService: LoginService) {
   const axios = Axios.create({
     baseURL: "https://8p31a5pvr0.execute-api.us-east-1.amazonaws.com/dev/",
     headers: { Authorization: user.idToken },
@@ -34,7 +35,11 @@ export function showMyPage(user: User) {
   ReactDOM.render(
     <React.StrictMode>
       <HashRouter>
-        <RouterWrapper user={user} httpService={httpService} />
+        <RouterWrapper
+          user={user}
+          httpService={httpService}
+          loginService={loginService}
+        />
       </HashRouter>
     </React.StrictMode>,
     document.getElementById("root")
@@ -45,6 +50,7 @@ export function showMyPage(user: User) {
 const RouterWrapper: React.FunctionComponent<{
   user: User;
   httpService: HttpService;
+  loginService: LoginService;
 }> = (props) => {
   const user = props.user;
 
@@ -58,7 +64,8 @@ const RouterWrapper: React.FunctionComponent<{
     currentTimeService,
     history,
     user.userID,
-    user.nickname
+    user.nickname,
+    props.loginService
   );
 
   props.httpService.onMessage().subscribe((_) =>

@@ -18,7 +18,8 @@ export type Event =
   | { type: "toast / close" }
   | { type: "toast / redo-undo" }
   | { type: "toast / update status" }
-  | { type: "do update tasks" };
+  | { type: "do update tasks" }
+  | { type: "logout" };
 
 export type LoginPageEvent =
   | { type: "login / switch to sign up" }

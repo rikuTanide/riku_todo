@@ -36,5 +36,6 @@ export interface LoginService {
   login(mailAddr: string, password: string): Promise<boolean>;
   logout(): void;
   reload(): void;
+  goTop(): void;
   getCurrentUser(): Promise<User>;
 }

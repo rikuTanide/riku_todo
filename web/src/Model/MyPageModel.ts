@@ -3,6 +3,7 @@ import { PageState } from "../Types/State";
 import {
   CurrentTimeService,
   HttpService,
+  LoginService,
   StorageService,
 } from "../Service/Service";
 import { TaskSummary } from "../Types/Model";
@@ -19,7 +20,8 @@ export function setUp(
   currentTimeService: CurrentTimeService,
   history: History,
   userID: string,
-  nickname: string
+  nickname: string,
+  loginService: LoginService
 ): [PageState, Observable<PageState>, Observer<Event>] {
   const defaultState: PageState = {
     taskSummaries: [],
@@ -88,6 +90,7 @@ export function setUp(
     onUpdateStatus(getState, event, stateSubject, httpService, storageService);
     onToastClose(getState, event, stateSubject);
     doUpdateTasks(getState, event, stateSubject, httpService, storageService);
+    logout(getState, event, loginService);
   };
 
   eventSubject.subscribe((e) => handler(e));
@@ -981,4 +984,14 @@ export async function doUpdateTasks(
     taskSummaries: tasks,
   };
   observer.next(next);
+}
+
+export async function logout(
+  getState: GetState,
+  event: Event,
+  loginService: LoginService
+) {
+  if (event.type != "logout") return false;
+  loginService.logout();
+  loginService.goTop();
 }

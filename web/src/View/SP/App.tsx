@@ -10,6 +10,7 @@ import { Toast } from "./Toast";
 import { makeStyles } from "@material-ui/core/styles";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
+import { MyPage } from "./MyPage";
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -44,6 +45,7 @@ export const App: React.FunctionComponent<{
         )}
       />
       <Route path="/new" exact render={() => <NewTask {...props} />} />
+      <Route path="/mypage" exact render={() => <MyPage {...props} />} />
       <Route
         exact
         path="/tasks/:taskID/edit"

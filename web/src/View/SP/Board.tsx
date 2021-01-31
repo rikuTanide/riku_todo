@@ -17,11 +17,16 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
 import RestoreIcon from "@material-ui/icons/Restore";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import Toolbar from "@material-ui/core/Toolbar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
+  },
+  title: {
+    flexGrow: 1,
   },
 }));
 
@@ -53,15 +58,21 @@ const _Board: React.FunctionComponent<{
   return (
     <div className={classes.root}>
       <AppBar position="static">
-        <Tabs
-          value={tab}
-          onChange={handleChange}
-          aria-label="simple tabs example"
-        >
-          <Tab label={`進行中(${pc})`} value={0} />
-          <Tab label={`完了(${cc})`} value={1} />
-          <Tab label={`ゴミ箱(${tc})`} value={2} />
-        </Tabs>
+        <Toolbar>
+          <Tabs
+            value={tab}
+            onChange={handleChange}
+            aria-label="simple tabs example"
+            className={classes.title}
+          >
+            <Tab label={`進行中(${pc})`} value={0} />
+            <Tab label={`完了(${cc})`} value={1} />
+            <Tab label={`ゴミ箱(${tc})`} value={2} />
+          </Tabs>
+          <IconButton color="inherit" onClick={() => history.push("/mypage")}>
+            <AccountCircleIcon />
+          </IconButton>
+        </Toolbar>
       </AppBar>
       {type == "continue" ? <Continues {...props} /> : ""}
       {type == "complete" ? <Completes {...props} /> : ""}
