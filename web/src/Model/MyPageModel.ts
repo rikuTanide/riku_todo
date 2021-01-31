@@ -1018,6 +1018,7 @@ export async function deleteTask(
   const ok = await httpService.deleteTask(event.taskID);
 
   if (ok) {
+    httpService.message();
     const tasks = await fetchTasks(httpService, storageService);
     const prev = getState();
     const next: PageState = {
