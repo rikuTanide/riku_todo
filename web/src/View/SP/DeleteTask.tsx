@@ -1,20 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { PageState } from "../../Types/State";
 import { Observer } from "rxjs";
 import { Event } from "../../Types/Event";
 import { useParams } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import SaveIcon from "@material-ui/icons/Save";
 import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),

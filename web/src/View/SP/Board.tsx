@@ -14,6 +14,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
 import { CardActionArea } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import CheckIcon from "@material-ui/icons/Check";
 import RestoreIcon from "@material-ui/icons/Restore";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -274,7 +275,7 @@ export const Trashs: React.FunctionComponent<{
           </CardActionArea>
           <CardActions disableSpacing>
             <IconButton onClick={() => history.push(`/tasks/${t.id}/delete`)}>
-              <DeleteIcon />
+              <DeleteForeverIcon color="secondary" />
             </IconButton>
             <IconButton
               className={classes.expand}
