@@ -3,12 +3,12 @@ ToDoアプリ
 
 ## 動作確認方法
 ### 公開アプリ
-https://ricktodo.s3-ap-northeast-1.amazonaws.com/index.html#/
+https://ricktodo.s3-ap-northeast-1.amazonaws.com/index.html
 
 ### ローカル
 ```
 git clone git@github.com:rikuTanide/riku_todo.git
-cd rick_todo/web
+cd riku_todo/web
 yarn install
 yarn start or yarn test
 ```
@@ -16,6 +16,7 @@ yarn start or yarn test
 ## 仕様
 
 ### 共有範囲
+ - ログイン必須
  - 全員で同じToDoリストを共有する
  - トレロのようなプロジェクトを分ける機能は作らない
  - ユーザーIDによってアクセス権限管理などもしない
@@ -30,6 +31,7 @@ yarn start or yarn test
  - ToDo編集
  - 一覧画面で進捗を変更
  - ToDo削除
+ - 書き込みは他のブラウザに自動で反映される
 
 ### ToDoの項目
  - タイトル
@@ -147,6 +149,8 @@ URLはハッシュURLを使う。
 /tasks/:task_id/edit
 #### 削除
 /tasks/:task_id/delete
+#### マイページ
+/mypage
 
 ### PC
 #### 未完了タスク/完了タスク/ゴミ箱
@@ -157,6 +161,8 @@ URLはハッシュURLを使う。
 /tasks/:task_id/edit
 #### 削除
 /tasks/:task_id/delete
+#### マイページ
+/mypage
 
 ## REST API Endpoint
 
