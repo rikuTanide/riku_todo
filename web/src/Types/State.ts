@@ -32,7 +32,9 @@ export type Toast =
       taskID: string;
       trash: TrashStatus;
       progress: ProgressStatus;
-    };
+    }
+  | { type: "delete failure" }
+  | { type: "deleted" };
 
 export type LoginPageType = "login" | "sign up";
 

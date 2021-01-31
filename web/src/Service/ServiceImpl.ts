@@ -111,6 +111,16 @@ export class HttpServiceImpl implements HttpService {
       return false;
     }
   }
+
+  public async deleteTask(taskID: string): Promise<boolean> {
+    try {
+      const res = await this.axios.delete(`tasks/${taskID}`);
+      return res.status == 200;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
 }
 
 export class LoginServiceImple implements LoginService {

@@ -19,6 +19,7 @@ export type Event =
   | { type: "toast / redo-undo" }
   | { type: "toast / update status" }
   | { type: "do update tasks" }
+  | { type: "delete task"; taskID: string }
   | { type: "logout" };
 
 export type LoginPageEvent =

@@ -273,6 +273,9 @@ export const Trashs: React.FunctionComponent<{
             </CardContent>
           </CardActionArea>
           <CardActions disableSpacing>
+            <IconButton onClick={() => history.push(`/tasks/${t.id}/delete`)}>
+              <DeleteIcon />
+            </IconButton>
             <IconButton
               className={classes.expand}
               onClick={() => restore(t.id)}

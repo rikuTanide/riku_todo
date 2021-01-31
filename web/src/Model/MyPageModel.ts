@@ -91,6 +91,14 @@ export function setUp(
     onToastClose(getState, event, stateSubject);
     doUpdateTasks(getState, event, stateSubject, httpService, storageService);
     logout(getState, event, loginService);
+    deleteTask(
+      getState,
+      event,
+      history,
+      stateSubject,
+      httpService,
+      storageService
+    );
   };
 
   eventSubject.subscribe((e) => handler(e));
@@ -984,6 +992,51 @@ export async function doUpdateTasks(
     taskSummaries: tasks,
   };
   observer.next(next);
+}
+
+export async function deleteTask(
+  getState: GetState,
+  event: Event,
+  history: History,
+  observer: StateObserver,
+  httpService: HttpService,
+  storageService: StorageService
+) {
+  if (event.type != "delete task") return false;
+  history.push("/");
+  {
+    const state = getState();
+    const nextState: PageState = {
+      ...state,
+      taskSummaries: state.taskSummaries.map((t) =>
+        t.id == event.taskID ? { ...t, updating: true } : t
+      ),
+    };
+    observer.next(nextState);
+  }
+
+  const ok = await httpService.deleteTask(event.taskID);
+
+  if (ok) {
+    const tasks = await fetchTasks(httpService, storageService);
+    const prev = getState();
+    const next: PageState = {
+      ...prev,
+      taskSummaries: tasks,
+      toast: { type: "deleted" },
+    };
+    observer.next(next);
+  } else {
+    const prev = getState();
+    const next: PageState = {
+      ...prev,
+      taskSummaries: convertTaskSummariesType(
+        restoreFromStorage(storageService)
+      ),
+      toast: { type: "delete failure" },
+    };
+    observer.next(next);
+  }
 }
 
 export async function logout(

@@ -19,6 +19,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import NoteAddIcon from "@material-ui/icons/NoteAdd";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { MyPage } from "./MyPage";
+import { DeleteTask } from "./DeleteTask";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -158,6 +159,10 @@ export const App: React.FunctionComponent<{
         </Container>
       </main>
       <Route path="/new" render={() => <NewTask {...props} />} />
+      <Route
+        path="/tasks/:taskID/delete"
+        render={() => <DeleteTask {...props} />}
+      />
       <Route path="/mypage" render={() => <MyPage {...props} />} />
       <Route
         path="/tasks/:taskID/edit"

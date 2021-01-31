@@ -18,6 +18,7 @@ export interface HttpService {
   getTask(id: string): Promise<Task | null>;
   postTask(task: PostTask): Promise<boolean>;
   putTask(task: Task): Promise<boolean>;
+  deleteTask(taskID: string): Promise<boolean>;
 }
 
 export interface User {

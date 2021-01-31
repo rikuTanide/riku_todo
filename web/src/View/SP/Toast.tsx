@@ -72,5 +72,19 @@ export const Toast: React.FunctionComponent<{
       </div>
     );
   }
+  if (toastType == "deleted") {
+    return (
+      <Snackbar open={true} autoHideDuration={6000} onClose={close}>
+        <Alert severity="success">削除しました。</Alert>
+      </Snackbar>
+    );
+  }
+  if (toastType == "delete failure") {
+    return (
+      <Snackbar open={true} autoHideDuration={6000} onClose={close}>
+        <Alert severity="error">削除に失敗しました。</Alert>
+      </Snackbar>
+    );
+  }
   throw "ない";
 };

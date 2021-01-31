@@ -11,6 +11,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import { MyPage } from "./MyPage";
+import { DeleteTask } from "./DeleteTask";
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -50,6 +51,11 @@ export const App: React.FunctionComponent<{
         exact
         path="/tasks/:taskID/edit"
         render={() => <EditTask {...props} />}
+      />
+      <Route
+        exact
+        path="/tasks/:taskID/delete"
+        render={() => <DeleteTask {...props} />}
       />
       {toast ? <Toast toast={toast} observer={props.observer} /> : ""}
       <Route path="/" exact>
