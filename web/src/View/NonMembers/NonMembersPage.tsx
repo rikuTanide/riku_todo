@@ -48,7 +48,7 @@ export const NonMembersPage: React.FunctionComponent<{
     return () => ss.unsubscribe();
   });
 
-  if (state.type == "login")
+  if (state.type === "login")
     return <LoginPage observer={props.observer} state={state} />;
   else return <SignUpPage observer={props.observer} state={state} />;
 };

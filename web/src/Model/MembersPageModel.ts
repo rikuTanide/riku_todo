@@ -123,7 +123,7 @@ export function openNewTaskPage(
   observer: StateObserver,
   storageService: StorageService
 ) {
-  if (event.type != "new task / open") return false;
+  if (event.type !== "new task / open") return false;
   const [title, body] = storageService.getNewTask();
   const prev = getState();
   const next: PageState = {
@@ -143,7 +143,7 @@ export function onTitleInput(
   observer: StateObserver,
   storageService: StorageService
 ) {
-  if (event.type != "new task / title input") return false;
+  if (event.type !== "new task / title input") return false;
   const prev = getState();
   const next: PageState = {
     ...prev,
@@ -162,7 +162,7 @@ export function onBodyInput(
   observer: StateObserver,
   storageService: StorageService
 ) {
-  if (event.type != "new task / body input") return false;
+  if (event.type !== "new task / body input") return false;
   const prev = getState();
   const next: PageState = {
     ...prev,
@@ -188,7 +188,7 @@ export async function onNewTaskSubmit(
   userID: string,
   nickname: string
 ) {
-  if (event.type != "new task / submit") return false;
+  if (event.type !== "new task / submit") return false;
   history.push("/");
 
   const prev = getState();
@@ -286,7 +286,7 @@ export async function onDetailFetch(
   observer: StateObserver,
   httpService: HttpService
 ) {
-  if (event.type != "detail / fetch") return false;
+  if (event.type !== "detail / fetch") return false;
   const prev = getState();
 
   {
@@ -341,7 +341,7 @@ export function onEditTitle(
   event: Event,
   observer: StateObserver
 ) {
-  if (event.type != "detail / edit title") return false;
+  if (event.type !== "detail / edit title") return false;
   const prev = getState();
 
   const prevEdit = prev.editTask!;
@@ -363,7 +363,7 @@ export function onEditBody(
   event: Event,
   observer: StateObserver
 ) {
-  if (event.type != "detail / edit body") return false;
+  if (event.type !== "detail / edit body") return false;
   const prev = getState();
 
   const prevEdit = prev.editTask!;
@@ -385,7 +385,7 @@ export function onEditProgress(
   event: Event,
   observer: StateObserver
 ) {
-  if (event.type != "detail / edit progress") return false;
+  if (event.type !== "detail / edit progress") return false;
   const prev = getState();
 
   const prevEdit = prev.editTask!;
@@ -406,7 +406,7 @@ export function onEditTrash(
   event: Event,
   observer: StateObserver
 ) {
-  if (event.type != "detail / edit trash") return false;
+  if (event.type !== "detail / edit trash") return false;
   const prev = getState();
 
   const prevEdit = prev.editTask!;
@@ -440,12 +440,12 @@ export async function onEditSave(
   storageService: StorageService,
   history: History
 ) {
-  if (event.type != "detail / save") return false;
+  if (event.type !== "detail / save") return false;
   const prev = getState();
 
   const prevEdit = prev.editTask!;
   const updatingTaskSummaries = prev.taskSummaries.map((t) =>
-    t.id == prevEdit.id
+    t.id === prevEdit.id
       ? { ...t, updating: true, title: prevEdit.next.title }
       : t
   );
@@ -505,12 +505,12 @@ export async function onListTaskComplete(
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type != "list / complete") return false;
+  if (event.type !== "list / complete") return false;
   const prev = getState();
 
   const updatingTaskSummaries = prev.taskSummaries.map(
     (t): TaskSummary =>
-      t.id == event.taskID ? { ...t, progress: "complete", updating: true } : t
+      t.id === event.taskID ? { ...t, progress: "complete", updating: true } : t
   );
   const next: PageState = {
     ...prev,
@@ -566,17 +566,15 @@ export async function onListTaskComplete(
       observer.next(next);
     }
   } else {
-    {
-      const next: PageState = {
-        ...prev,
-        editTask: undefined,
-        taskSummaries: convertTaskSummariesType(
-          restoreFromStorage(storageService)
-        ),
-        toast: { type: "edit redo", task: nextTask },
-      };
-      observer.next(next);
-    }
+    const next: PageState = {
+      ...prev,
+      editTask: undefined,
+      taskSummaries: convertTaskSummariesType(
+        restoreFromStorage(storageService)
+      ),
+      toast: { type: "edit redo", task: nextTask },
+    };
+    observer.next(next);
   }
 }
 
@@ -587,12 +585,12 @@ export async function onListTaskContinue(
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type != "list / continue") return false;
+  if (event.type !== "list / continue") return false;
   const prev = getState();
 
   const updatingTaskSummaries = prev.taskSummaries.map(
     (t): TaskSummary =>
-      t.id == event.taskID ? { ...t, progress: "continue", updating: true } : t
+      t.id === event.taskID ? { ...t, progress: "continue", updating: true } : t
   );
   const next: PageState = {
     ...prev,
@@ -648,17 +646,15 @@ export async function onListTaskContinue(
       observer.next(next);
     }
   } else {
-    {
-      const next: PageState = {
-        ...prev,
-        editTask: undefined,
-        taskSummaries: convertTaskSummariesType(
-          restoreFromStorage(storageService)
-        ),
-        toast: { type: "edit redo", task: nextTask },
-      };
-      observer.next(next);
-    }
+    const next: PageState = {
+      ...prev,
+      editTask: undefined,
+      taskSummaries: convertTaskSummariesType(
+        restoreFromStorage(storageService)
+      ),
+      toast: { type: "edit redo", task: nextTask },
+    };
+    observer.next(next);
   }
 }
 
@@ -669,12 +665,12 @@ export async function onListTaskTrash(
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type != "list / trash") return false;
+  if (event.type !== "list / trash") return false;
   const prev = getState();
 
   const updatingTaskSummaries = prev.taskSummaries.map(
     (t): TaskSummary =>
-      t.id == event.taskID ? { ...t, trash: "trash", updating: true } : t
+      t.id === event.taskID ? { ...t, trash: "trash", updating: true } : t
   );
   const next: PageState = {
     ...prev,
@@ -687,7 +683,7 @@ export async function onListTaskTrash(
   const prevTask = await httpService.getTask(event.taskID);
   if (!prevTask) {
     const prev = getState();
-    const nextProgress = prev.taskSummaries.find((t) => t.id == event.taskID)!
+    const nextProgress = prev.taskSummaries.find((t) => t.id === event.taskID)!
       .progress;
     const next: PageState = {
       ...prev,
@@ -732,17 +728,15 @@ export async function onListTaskTrash(
       observer.next(next);
     }
   } else {
-    {
-      const next: PageState = {
-        ...prev,
-        editTask: undefined,
-        taskSummaries: convertTaskSummariesType(
-          restoreFromStorage(storageService)
-        ),
-        toast: { type: "edit redo", task: nextTask },
-      };
-      observer.next(next);
-    }
+    const next: PageState = {
+      ...prev,
+      editTask: undefined,
+      taskSummaries: convertTaskSummariesType(
+        restoreFromStorage(storageService)
+      ),
+      toast: { type: "edit redo", task: nextTask },
+    };
+    observer.next(next);
   }
 }
 
@@ -753,12 +747,12 @@ export async function onListTaskRestore(
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type != "list / restore") return false;
+  if (event.type !== "list / restore") return false;
   const prev = getState();
 
   const updatingTaskSummaries = prev.taskSummaries.map(
     (t): TaskSummary =>
-      t.id == event.taskID ? { ...t, trash: "", updating: true } : t
+      t.id === event.taskID ? { ...t, trash: "", updating: true } : t
   );
   const next: PageState = {
     ...prev,
@@ -771,7 +765,7 @@ export async function onListTaskRestore(
   const prevTask = await httpService.getTask(event.taskID);
   if (!prevTask) {
     const prev = getState();
-    const nextProgress = prev.taskSummaries.find((t) => t.id == event.taskID)!
+    const nextProgress = prev.taskSummaries.find((t) => t.id === event.taskID)!
       .progress;
     const next: PageState = {
       ...prev,
@@ -816,17 +810,15 @@ export async function onListTaskRestore(
       observer.next(next);
     }
   } else {
-    {
-      const next: PageState = {
-        ...prev,
-        editTask: undefined,
-        taskSummaries: convertTaskSummariesType(
-          restoreFromStorage(storageService)
-        ),
-        toast: { type: "edit redo", task: nextTask },
-      };
-      observer.next(next);
-    }
+    const next: PageState = {
+      ...prev,
+      editTask: undefined,
+      taskSummaries: convertTaskSummariesType(
+        restoreFromStorage(storageService)
+      ),
+      toast: { type: "edit redo", task: nextTask },
+    };
+    observer.next(next);
   }
 }
 
@@ -837,7 +829,7 @@ export async function onToastUndo(
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type != "toast / redo-undo") return false;
+  if (event.type !== "toast / redo-undo") return false;
   const prev = getState();
 
   // undoコマンドが打てるということはここにデータがあるはず
@@ -852,7 +844,7 @@ export async function onToastUndo(
     time: nextTask.time,
   };
   const updatingTaskSummaries = prev.taskSummaries.map(
-    (t): TaskSummary => (t.id == taskID ? nextTaskSummary : t)
+    (t): TaskSummary => (t.id === taskID ? nextTaskSummary : t)
   );
   const next: PageState = {
     ...prev,
@@ -897,7 +889,7 @@ export async function onToastClose(
   event: Event,
   observer: StateObserver
 ) {
-  if (event.type != "toast / close") return false;
+  if (event.type !== "toast / close") return false;
   const prev = getState();
   const next: PageState = { ...prev, toast: undefined };
   observer.next(next);
@@ -910,7 +902,7 @@ export async function onUpdateStatus(
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type != "toast / update status") return false;
+  if (event.type !== "toast / update status") return false;
   const prev = getState();
 
   // undoコマンドが打てるということはここにデータがあるはず
@@ -921,7 +913,7 @@ export async function onUpdateStatus(
   };
   const updatingTaskSummaries = prev.taskSummaries.map(
     (t): TaskSummary =>
-      t.id == nextTask.taskID
+      t.id === nextTask.taskID
         ? { ...t, trash: nextTask.trash, progress: nextTask.progress }
         : t
   );
@@ -983,7 +975,7 @@ export async function doUpdateTasks(
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type != "do update tasks") return false;
+  if (event.type !== "do update tasks") return false;
 
   const tasks = await fetchTasks(httpService, storageService);
   const prev = getState();
@@ -1002,14 +994,14 @@ export async function deleteTask(
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type != "delete task") return false;
+  if (event.type !== "delete task") return false;
   history.push("/");
   {
     const state = getState();
     const nextState: PageState = {
       ...state,
       taskSummaries: state.taskSummaries.map((t) =>
-        t.id == event.taskID ? { ...t, updating: true } : t
+        t.id === event.taskID ? { ...t, updating: true } : t
       ),
     };
     observer.next(nextState);
@@ -1045,7 +1037,7 @@ export async function logout(
   event: Event,
   loginService: LoginService
 ) {
-  if (event.type != "logout") return false;
+  if (event.type !== "logout") return false;
   loginService.logout();
   loginService.goTop();
 }

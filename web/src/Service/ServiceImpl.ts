@@ -95,7 +95,7 @@ export class HttpServiceImpl implements HttpService {
   public async postTask(task: PostTask): Promise<boolean> {
     try {
       const res = await this.axios.post("tasks", task);
-      return res.status == 201;
+      return res.status === 201;
     } catch (e) {
       console.log(e);
       return false;
@@ -105,7 +105,7 @@ export class HttpServiceImpl implements HttpService {
   public async putTask(task: Task): Promise<boolean> {
     try {
       const res = await this.axios.put(`tasks/${task.id}`, task);
-      return res.status == 200;
+      return res.status === 200;
     } catch (e) {
       console.log(e);
       return false;
@@ -115,7 +115,7 @@ export class HttpServiceImpl implements HttpService {
   public async deleteTask(taskID: string): Promise<boolean> {
     try {
       const res = await this.axios.delete(`tasks/${taskID}`);
-      return res.status == 200;
+      return res.status === 200;
     } catch (e) {
       console.log(e);
       return false;
@@ -198,7 +198,6 @@ export class LoginServiceImple implements LoginService {
           const token = session.getIdToken();
           const userID = token.payload["sub"] as string;
           const nickname = token.payload["nickname"] as string;
-          const currentTime = () => new Date();
 
           if (!nickname) return;
           if (!userID) return;

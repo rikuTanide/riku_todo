@@ -43,18 +43,18 @@ const _Board: React.FunctionComponent<{
 
   const history = useHistory();
   function handleChange(e: any, value: any) {
-    if (value == 0) history.push("?");
-    else if (value == 1) history.push("?progress=complete");
-    else if (value == 2) history.push("?trash=true");
+    if (value === 0) history.push("?");
+    else if (value === 1) history.push("?progress=complete");
+    else if (value === 2) history.push("?trash=true");
   }
 
   const pc = props.tasks.filter(
-    (t) => t.progress == "continue" && t.trash == ""
+    (t) => t.progress === "continue" && t.trash === ""
   ).length;
   const cc = props.tasks.filter(
-    (t) => t.progress == "complete" && t.trash == ""
+    (t) => t.progress === "complete" && t.trash === ""
   ).length;
-  const tc = props.tasks.filter((t) => t.trash == "trash").length;
+  const tc = props.tasks.filter((t) => t.trash === "trash").length;
 
   return (
     <div className={classes.root}>
@@ -75,9 +75,9 @@ const _Board: React.FunctionComponent<{
           </IconButton>
         </Toolbar>
       </AppBar>
-      {type == "continue" ? <Continues {...props} /> : ""}
-      {type == "complete" ? <Completes {...props} /> : ""}
-      {type == "trash" ? <Trashs {...props} /> : ""}
+      {type === "continue" ? <Continues {...props} /> : ""}
+      {type === "complete" ? <Completes {...props} /> : ""}
+      {type === "trash" ? <Trashs {...props} /> : ""}
     </div>
   );
 };
@@ -85,8 +85,8 @@ export const Board = React.memo(_Board);
 
 function checkType(query: string): ["trash" | "complete" | "continue", number] {
   const search = new URLSearchParams(query);
-  if (search.get("trash") == "true") return ["trash", 2];
-  if (search.get("progress") == "complete") return ["complete", 1];
+  if (search.get("trash") === "true") return ["trash", 2];
+  if (search.get("progress") === "complete") return ["complete", 1];
   return ["continue", 0];
 }
 
@@ -139,7 +139,7 @@ export const Continues: React.FunctionComponent<{
   const classes = useCardStyles();
 
   const tasks = props.tasks
-    .filter((t) => t.progress == "continue" && t.trash == "")
+    .filter((t) => t.progress === "continue" && t.trash === "")
     .sort((t1, t2) => (t1.time > t2.time ? -1 : 1));
   return (
     <div>
@@ -205,7 +205,7 @@ export const Completes: React.FunctionComponent<{
   }
 
   const tasks = props.tasks
-    .filter((t) => t.progress == "complete" && t.trash == "")
+    .filter((t) => t.progress === "complete" && t.trash === "")
     .sort((t1, t2) => (t1.time > t2.time ? -1 : 1));
   return (
     <div>
@@ -257,7 +257,7 @@ export const Trashs: React.FunctionComponent<{
   }
 
   const tasks = props.tasks
-    .filter((t) => t.trash == "trash")
+    .filter((t) => t.trash === "trash")
     .sort((t1, t2) => (t1.time > t2.time ? -1 : 1));
   return (
     <div>

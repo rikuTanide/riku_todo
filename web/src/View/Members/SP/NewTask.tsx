@@ -39,7 +39,7 @@ export const NewTask: React.FunctionComponent<{
     props.observer.next({
       type: "new task / open",
     });
-  }, []);
+  }, [props.observer]);
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();

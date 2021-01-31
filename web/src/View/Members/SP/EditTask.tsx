@@ -43,12 +43,12 @@ export const EditTask: React.FunctionComponent<{
       type: "detail / fetch",
       taskID: taskID,
     });
-  }, []);
+  }, [props.observer, taskID]);
 
   const editTask = state.editTask;
 
   if (!editTask) return <div>loading</div>;
-  if (editTask.id != taskID) return <div>loading</div>;
+  if (editTask.id !== taskID) return <div>loading</div>;
   if (editTask.loading) return <div>loading</div>;
 
   function onSubmit(e: React.FormEvent) {

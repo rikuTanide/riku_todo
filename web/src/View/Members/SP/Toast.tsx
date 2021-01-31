@@ -17,7 +17,7 @@ export const Toast: React.FunctionComponent<{
   const close = () => props.observer.next({ type: "toast / close" });
 
   const toastType = props.toast.type;
-  if (toastType == "edit redo") {
+  if (toastType === "edit redo") {
     return (
       <Snackbar open={true} autoHideDuration={6000} onClose={close}>
         <Alert severity="success">
@@ -27,7 +27,7 @@ export const Toast: React.FunctionComponent<{
       </Snackbar>
     );
   }
-  if (toastType == "edit undo") {
+  if (toastType === "edit undo") {
     return (
       <Snackbar open={true} autoHideDuration={6000} onClose={close}>
         <Alert severity="success">
@@ -42,14 +42,14 @@ export const Toast: React.FunctionComponent<{
       </Snackbar>
     );
   }
-  if (toastType == "fetch detail error") {
+  if (toastType === "fetch detail error") {
     return (
       <div>
         <button onClick={close}>×</button>取得できませんでした。
       </div>
     );
   }
-  if (toastType == "list status change error") {
+  if (toastType === "list status change error") {
     return (
       <div>
         <button onClick={close}>×</button>保存できませんでした
@@ -57,14 +57,14 @@ export const Toast: React.FunctionComponent<{
       </div>
     );
   }
-  if (toastType == "new task submit error") {
+  if (toastType === "new task submit error") {
     return (
       <div>
         <button onClick={close}>×</button>保存できませんでした
       </div>
     );
   }
-  if (toastType == "update task submit error") {
+  if (toastType === "update task submit error") {
     return (
       <div>
         <button onClick={close}>×</button>変更に失敗しました。
@@ -72,19 +72,19 @@ export const Toast: React.FunctionComponent<{
       </div>
     );
   }
-  if (toastType == "deleted") {
+  if (toastType === "deleted") {
     return (
       <Snackbar open={true} autoHideDuration={6000} onClose={close}>
         <Alert severity="success">削除しました。</Alert>
       </Snackbar>
     );
   }
-  if (toastType == "delete failure") {
+  if (toastType === "delete failure") {
     return (
       <Snackbar open={true} autoHideDuration={6000} onClose={close}>
         <Alert severity="error">削除に失敗しました。</Alert>
       </Snackbar>
     );
   }
-  throw "ない";
+  throw new Error("想定していないtoast type");
 };

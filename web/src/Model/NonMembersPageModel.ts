@@ -43,7 +43,7 @@ export function createHandler(
 type Observer = RxObserver<LoginPageState>;
 
 export function switchToSignUp(prev: State, event: Event, observer: Observer) {
-  if (event.type != "login / switch to sign up") return false;
+  if (event.type !== "login / switch to sign up") return false;
   const next: State = {
     ...prev,
     type: "sign up",
@@ -56,7 +56,7 @@ export function onLoginPageMailAddr(
   event: Event,
   observer: Observer
 ) {
-  if (event.type != "login / mail addr") return;
+  if (event.type !== "login / mail addr") return;
   const next: State = {
     ...prev,
     loginMailAddr: event.mailAddr,
@@ -69,7 +69,7 @@ export function onLoginPagePassword(
   event: Event,
   observer: Observer
 ) {
-  if (event.type != "login / password") return;
+  if (event.type !== "login / password") return;
   const next: State = {
     ...prev,
     loginPassword: event.password,
@@ -83,7 +83,7 @@ export async function onTryLogin(
   observer: Observer,
   loginService: LoginService
 ) {
-  if (event.type != "login / try login") return;
+  if (event.type !== "login / try login") return;
   {
     const next: State = {
       ...prev,
@@ -107,7 +107,7 @@ export async function onTryLogin(
 }
 
 export function switchToLogin(prev: State, event: Event, observer: Observer) {
-  if (event.type != "sing up / switch to login") return false;
+  if (event.type !== "sing up / switch to login") return false;
   const next: State = {
     ...prev,
     type: "login",
@@ -120,7 +120,7 @@ export function onSignUpPageMailAddr(
   event: Event,
   observer: Observer
 ) {
-  if (event.type != "sign up / mail add") return;
+  if (event.type !== "sign up / mail add") return;
   const next: State = {
     ...prev,
     signUpMailAddr: event.mailAddr,
@@ -133,7 +133,7 @@ export function onSignUpPageNickname(
   event: Event,
   observer: Observer
 ) {
-  if (event.type != "sign up / nickname") return;
+  if (event.type !== "sign up / nickname") return;
   const next: State = {
     ...prev,
     signUpNickname: event.nickname,
@@ -146,7 +146,7 @@ export function onSignUpPagePassword(
   event: Event,
   observer: Observer
 ) {
-  if (event.type != "sign up / password") return;
+  if (event.type !== "sign up / password") return;
   const next: State = {
     ...prev,
     signUpPassword: event.password,
@@ -160,7 +160,7 @@ export async function onTrySignUp(
   observer: Observer,
   loginService: LoginService
 ) {
-  if (event.type != "sign up / try sign up") return;
+  if (event.type !== "sign up / try sign up") return;
   {
     const next: State = {
       ...prev,
