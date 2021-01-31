@@ -27,7 +27,7 @@ const serverlessConfiguration: AWS = {
       {
         Effect: "Allow",
         Resource: "arn:aws:dynamodb:us-east-1:692619880522:table/tasks",
-        Action: ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:Scan", "dynamodb:DeleteItem"],
+        Action: ["dynamodb:UpdateItem","dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:Scan", "dynamodb:DeleteItem"],
 
       },
       {
