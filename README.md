@@ -1,4 +1,4 @@
-# riku_todo
+# Rick ToDo
 ToDoアプリ
 
 ## 動作確認方法
@@ -13,42 +13,23 @@ yarn install
 yarn start or yarn test
 ```
 
-## 技術選定と全体のアーキテクチャ
-
- - ログイン機能はCognito
- - REST APIはAmazon API GatewayとAWS Lambda (Node.js)
- - DBはAmazon DynamoDB
- - クラウドの設定はServerless Framework 
- - WebSocketのエンドポイントも同上
- - WebフロントエンドはReact/TypeScript
- - formatはPrettier
- - テストはJest
- - HttpClientはAuthorizationの設定やTimeoutの設定を共通化しやすい
-   Axiosを使う
- - AjvでサーバーからのJSONをバリデーションする
- - 状態管理・イベントハンドリングはRxJS
-
-### フロントエンドのアーキテクチャ
-
- - UIはstate(src/Types/State.ts)に対して参照等価である
- - ビジネスロジックはRxJSを使って最新のstateをobserveする
- - UIはReact Hooksを使いビジネスロジックからstateをsubscribeする
- - UIは操作に応じてEvent(src/Types/Event.ts)を発出する
- - ビジネスロジック(src/Types/Model.ts)は現在のstateとeventをもとに次のstateを作成しUIに送信する
- - Model.tsはすべてのハンドラにイベントを送り、各ハンドラは自分宛ての場合にのみ処理をする
-   （自分のプロダクトではよりここを抽象化しているが、今回は見た目がわかりやすいようにこうした）
-
-
 ## 仕様
+
+### 共有範囲
+ - 全員で同じToDoリストを共有する
+ - トレロのようなプロジェクトを分ける機能は作らない
+ - ユーザーIDによってアクセス権限管理などもしない
 
 ### 機能
 
  - 会員登録
  - ログイン
+ - ログアウト
  - ToDo作成
  - ToDo閲覧
  - ToDo編集
  - 一覧画面で進捗を変更
+ - ToDo削除
 
 ### ToDoの項目
  - タイトル
@@ -57,11 +38,6 @@ yarn start or yarn test
  - ゴミ箱    
  - 作成者のユーザーIDとnickname
  - 作成時刻
-
-### 共有範囲
- - ログインしているすべての人で同じToDoリストを見る
- - トレロのようなプロジェクトを分ける機能は作らない
- - ユーザーIDによってアクセス権限管理などもしない
 
 ### UI
  - レスポンシブ
@@ -83,16 +59,74 @@ yarn start or yarn test
  - 書き込み中の文章はlocalStorageに保存し  
    リロードしても残るようにする
 
+## 技術選定
+
+### サーバーサイド
+
+|目的|技術|
+|---|---|
+|REST API|Amazon API GatewayとAWS Lambda|
+|WebSocketエンドポイント|Amazon API GatewayとAWS Lambda|
+|DB|Amazon DynamoDB|
+|構成管理|Serverless Framework|
+
+
+### フロントエンド
+
+|目的|技術|
+|---|---|
+|ログイン|Amazon Cognito|
+|言語|TypeScript|
+|ビューライブラリ|React|
+|HttpClient|Axios|
+|UIフレームワーク|Material-UI|
+|イベントハンドリング|RxJS|
+
+### 共通
+
+|目的|技術|
+|---|---|
+|テスト|Jest|
+|フォーマッター|Prettier|
+|JSONのバリデーション|Ajv|
+
+### アーキテクチャ
+
+### テーマ
+
+ - ビューとビジネスロジックを完全に切り離す
+ - ビューはStateに対する純粋関数にする
+ - ビジネスロジックはPrev StateとEventを引数にNext Stateを返す純粋関数にする
+
+### 手段
+
+ - ビューとビジネスロジックの接続点はRxJSのSubjectのみ
+   - ビュー <-- 状態 -- ビジネスロジック  
+   - ビュー -- 操作イベント --> ビジネスロジック
+ - 純粋関数にならない部分はサービスとして引数でいれる
+     - ログイン
+     - HttpClient
+     - 現在時刻
+     - History API
+     - ローカルストレージ
+
 ### テスト戦略
-RxJSを使いUIとビジネスロジックを完全に分ける。  
-UIはstateのみに依存する。  
-UIのテストはしない。  
-UIからビジネスロジックへはコマンドオブジェクトのみで通信する。  
-ビジネスロジックがprev stateとeventから正しいnext stateを作成できたかをテストする。
-乱数や現在時刻などはすべてサービス化しモックしやすくする
+#### UIのテスト
+ *しない*
+#### 理由
+ - 手数の割に得るものが少ない
+ - f(state) = UIが維持できていれば実機確認が容易
+
+#### ビジネスロジックのテスト
+##### 方針
+
+現在の状態と操作のイベントを引数に  
+次の状態を正しく返せているかと  
+正しく副作用を起こせているかをテスト。
+
+副作用のテストは各サービスのモックを作りJsetの機能でspy。
     
 ## 時間があれば作る
- - ゴミ箱からさらに削除する機能
  - puppeteerでe2eテストをする
  - PCとスマホのコードをmedia queryで先読み
  
@@ -109,16 +143,20 @@ URLはハッシュURLを使う。
 /?trash=true
 #### 新規作成
 /new
-#### 詳細
-/tasks/:task_id
+#### 編集
+/tasks/:task_id/edit
+#### 削除
+/tasks/:task_id/delete
 
 ### PC
 #### 未完了タスク/完了タスク/ゴミ箱
 /
 #### 新規作成
 /new
-#### 詳細
-/tasks/:task_id
+#### 編集
+/tasks/:task_id/edit
+#### 削除
+/tasks/:task_id/delete
 
 ## REST API Endpoint
 
@@ -141,6 +179,7 @@ GET /tasks/:task_id
 PUT /tasks/:task_id
 タイトル・本文・進捗変更などは同じAPIを使う
 成功した場合は200
-
+### タスク削除
+DELETE /tasks/:task_id
 ### WebSocketエンドポイント
 何かメッセージを送ればすべてのWebSocket Connectionに空のメッセージが送られるようにする
