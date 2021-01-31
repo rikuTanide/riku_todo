@@ -1,11 +1,11 @@
 import React from "react";
-import { PageState } from "../../Types/State";
+import { PageState } from "../../../Types/State";
 import { Observer } from "rxjs";
-import { Event } from "../../Types/Event";
+import { Event } from "../../../Types/Event";
+import { useHistory } from "react-router-dom";
+import { EditTask as EditTaskInner } from "../SP/EditTask";
 import Modal from "@material-ui/core/Modal";
 import { makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router-dom";
-import { MyPage as MyPageInner } from "../SP/MyPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,12 +34,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const MyPage: React.FunctionComponent<{
+export const EditTask: React.FunctionComponent<{
   state: PageState;
   observer: Observer<Event>;
 }> = (props) => {
   const classes = useStyles();
-
   const history = useHistory();
 
   return (
@@ -54,7 +53,7 @@ export const MyPage: React.FunctionComponent<{
       onClose={() => history.push("/")}
     >
       <div className={classes.paper}>
-        <MyPageInner {...props} />
+        <EditTaskInner {...props} />
       </div>
     </Modal>
   );

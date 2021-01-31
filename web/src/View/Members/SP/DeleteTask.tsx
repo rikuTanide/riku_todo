@@ -1,7 +1,7 @@
 import React from "react";
-import { PageState } from "../../Types/State";
+import { PageState } from "../../../Types/State";
 import { Observer } from "rxjs";
-import { Event } from "../../Types/Event";
+import { Event } from "../../../Types/Event";
 import { useParams } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";

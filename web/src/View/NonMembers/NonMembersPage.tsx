@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // https://github.com/mui-org/material-ui/blob/master/docs/src/pages/getting-started/templates/sign-in/SignIn.js
-export const LoginOrSignUpPage: React.FunctionComponent<{
+export const NonMembersPage: React.FunctionComponent<{
   observer: Observer<LoginPageEvent>;
   observable: Observable<State>;
   defaultState: State;

@@ -1,15 +1,15 @@
 import { LoginService } from "./Service/Service";
-import { createHandler } from "./Model/LoginpageModel";
+import { createHandler } from "./Model/NonMembersPageModel";
 import ReactDOM from "react-dom";
 import React from "react";
-import { LoginOrSignUpPage } from "./View/Login/LoginPage";
+import { NonMembersPage } from "./View/NonMembers/NonMembersPage";
 
 export function showLoginPage(loginService: LoginService) {
   const [state, observer, observable] = createHandler(loginService);
 
   ReactDOM.render(
     <React.StrictMode>
-      <LoginOrSignUpPage
+      <NonMembersPage
         defaultState={state}
         observable={observable}
         observer={observer}

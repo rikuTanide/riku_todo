@@ -1,7 +1,7 @@
 import React from "react";
 import { Observer } from "rxjs";
-import { Event } from "../../Types/Event";
-import { TaskSummary } from "../../Types/Model";
+import { Event } from "../../../Types/Event";
+import { TaskSummary } from "../../../Types/Model";
 import Grid from "@material-ui/core/Grid";
 import { Completes, Continues, Trashs } from "../SP/Board";
 

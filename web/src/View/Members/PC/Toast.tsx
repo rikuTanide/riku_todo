@@ -1,7 +1,7 @@
 import React from "react";
-import { Toast as ToastState } from "../../Types/State";
+import { Toast as ToastState } from "../../../Types/State";
 import { Observer } from "rxjs";
-import { Event } from "../../Types/Event";
+import { Event } from "../../../Types/Event";
 
 export const Toast: React.FunctionComponent<{
   toast: ToastState;

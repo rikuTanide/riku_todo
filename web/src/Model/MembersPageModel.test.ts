@@ -3,7 +3,11 @@ import { PageState } from "../Types/State";
 import { HttpService, StorageService } from "../Service/Service";
 import { Subject } from "rxjs";
 import { map, toArray } from "rxjs/operators";
-import { onNewTaskSubmit, onTitleInput, openNewTaskPage } from "./MyPageModel";
+import {
+  onNewTaskSubmit,
+  onTitleInput,
+  openNewTaskPage,
+} from "./MembersPageModel";
 import { PostTask, TaskSummary } from "../Types/Rest";
 import { createMemoryHistory } from "history";
 

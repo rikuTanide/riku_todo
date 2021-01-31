@@ -10,7 +10,7 @@ import {
 import Axios from "axios";
 import MediaQuery, { useMediaQuery } from "react-responsive";
 import { HashRouter, useHistory } from "react-router-dom";
-import { createHandler } from "./Model/MyPageModel";
+import { createHandler } from "./Model/MembersPageModel";
 import {
   currentTimeServiceImple,
   HttpServiceImpl,
@@ -21,8 +21,8 @@ import { Event } from "./Types/Event";
 import { Observable, Observer } from "rxjs";
 import { History } from "history";
 
-const PC = React.lazy(() => import("./View/PC/App"));
-const SP = React.lazy(() => import("./View/SP/App"));
+const PC = React.lazy(() => import("./View/Members/PC/App"));
+const SP = React.lazy(() => import("./View/Members/SP/App"));
 
 export function showMyPage(user: User, loginService: LoginService) {
   const axios = Axios.create({

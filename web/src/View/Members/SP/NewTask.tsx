@@ -1,15 +1,14 @@
 import React, { useEffect } from "react";
-import { PageState } from "../../Types/State";
+import { PageState } from "../../../Types/State";
 import { Observer } from "rxjs";
-import { Event } from "../../Types/Event";
-import { useParams } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
+import { Event } from "../../../Types/Event";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import SaveIcon from "@material-ui/icons/Save";
+import { makeStyles } from "@material-ui/core/styles";
+import PostAddIcon from "@material-ui/icons/PostAdd";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,45 +28,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const EditTask: React.FunctionComponent<{
+export const NewTask: React.FunctionComponent<{
   state: PageState;
   observer: Observer<Event>;
 }> = (props) => {
   const state = props.state;
-
-  const { taskID } = useParams<{ taskID: string }>();
   const classes = useStyles();
 
   useEffect(() => {
     props.observer.next({
-      type: "detail / fetch",
-      taskID: taskID,
+      type: "new task / open",
     });
   }, []);
-
-  const editTask = state.editTask;
-
-  if (!editTask) return <div>loading</div>;
-  if (editTask.id != taskID) return <div>loading</div>;
-  if (editTask.loading) return <div>loading</div>;
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     props.observer.next({
-      type: "detail / save",
+      type: "new task / submit",
     });
   }
 
   function onTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
     props.observer.next({
-      type: "detail / edit title",
+      type: "new task / title input",
       title: e.target.value,
     });
   }
 
   function onBodyChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     props.observer.next({
-      type: "detail / edit body",
+      type: "new task / body input",
       body: e.target.value,
     });
   }
@@ -78,11 +68,12 @@ export const EditTask: React.FunctionComponent<{
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" className={classes.title}>
-              詳細
+              新規作成
             </Typography>
+
             <Button color="inherit" onClick={onSubmit}>
-              <SaveIcon />
-              保存
+              <PostAddIcon />
+              作成
             </Button>
           </Toolbar>
         </AppBar>
@@ -91,7 +82,7 @@ export const EditTask: React.FunctionComponent<{
           <TextField
             required
             label="タイトル"
-            value={editTask.next.title}
+            value={state.newTask.title}
             onChange={onTitleChange}
             variant="outlined"
             fullWidth
@@ -101,7 +92,7 @@ export const EditTask: React.FunctionComponent<{
         <div>
           <TextField
             label="本文"
-            value={editTask.next.body}
+            value={state.newTask.body}
             onChange={onBodyChange}
             variant="outlined"
             multiline={true}
@@ -109,9 +100,6 @@ export const EditTask: React.FunctionComponent<{
             fullWidth
           />
         </div>
-        <p>
-          <cite>{editTask.next.nickname}</cite>
-        </p>
       </form>
     </div>
   );

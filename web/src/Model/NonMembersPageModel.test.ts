@@ -1,6 +1,10 @@
 import { LoginPageEvent as Event } from "../Types/Event";
 import { LoginPageState as State } from "../Types/State";
-import { onLoginPageMailAddr, onTryLogin, onTrySignUp } from "./LoginpageModel";
+import {
+  onLoginPageMailAddr,
+  onTryLogin,
+  onTrySignUp,
+} from "./NonMembersPageModel";
 import { Subject } from "rxjs";
 import { map, toArray } from "rxjs/operators";
 import { LoginService } from "../Service/Service";

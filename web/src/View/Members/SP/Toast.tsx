@@ -1,7 +1,7 @@
 import React from "react";
-import { Toast as ToastState } from "../../Types/State";
+import { Toast as ToastState } from "../../../Types/State";
 import { Observer } from "rxjs";
-import { Event } from "../../Types/Event";
+import { Event } from "../../../Types/Event";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import Alert from "@material-ui/lab/Alert";
