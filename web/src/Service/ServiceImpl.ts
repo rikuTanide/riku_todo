@@ -197,7 +197,8 @@ export class LoginServiceImple implements LoginService {
             idToken: token.getJwtToken(),
             nickname: nickname,
           });
-        }
+        },
+        { clientMetadata: {} }
       );
     });
   }
@@ -215,7 +216,8 @@ export class LoginServiceImple implements LoginService {
           console.log(err);
           console.log(session);
           resolve(!!session);
-        }
+        },
+        { clientMetadata: {} }
       );
     });
   }
