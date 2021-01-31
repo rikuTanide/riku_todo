@@ -8,7 +8,7 @@ import {
   User,
 } from "./Service/Service";
 import Axios from "axios";
-import { useMediaQuery } from "react-responsive";
+import MediaQuery, { useMediaQuery } from "react-responsive";
 import { HashRouter, useHistory } from "react-router-dom";
 import { setUp } from "./Model/MyPageModel";
 import {
@@ -52,17 +52,26 @@ const RouterWrapper: React.FunctionComponent<{
   httpService: HttpService;
   loginService: LoginService;
 }> = (props) => {
-  const user = props.user;
+  const history = useHistory();
+  return <BindBusinessLogicWrapper {...props} history={history} />;
+};
 
+// RxJSを起動してビジネスロジックとViewを接続する
+const BindBusinessLogicWrapper: React.FunctionComponent<{
+  user: User;
+  httpService: HttpService;
+  loginService: LoginService;
+  history: History;
+}> = (props) => {
+  const user = props.user;
   const storageService: StorageService = new StorageServiceImple();
   const currentTimeService: CurrentTimeService = currentTimeServiceImple;
-  const history = useHistory();
 
   const [defaultState, stateObservable, eventObserver] = setUp(
     storageService,
     props.httpService,
     currentTimeService,
-    history,
+    props.history,
     user.userID,
     user.nickname,
     props.loginService
@@ -75,22 +84,21 @@ const RouterWrapper: React.FunctionComponent<{
   );
 
   return (
-    <QuerySelectorWrapper
+    <StateWrapper
       defaultState={defaultState}
       observable={stateObservable}
       observer={eventObserver}
-      history={history}
+      history={props.history}
     />
   );
 };
 
-const QuerySelectorWrapper: React.FunctionComponent<{
+const StateWrapper: React.FunctionComponent<{
   defaultState: PageState;
   observable: Observable<PageState>;
   observer: Observer<Event>;
   history: History;
 }> = (props) => {
-  const isSmartPhone = useMediaQuery({ maxDeviceWidth: 768 });
   const [state, setState] = useState<PageState>(props.defaultState);
 
   useEffect(() => {
@@ -99,11 +107,29 @@ const QuerySelectorWrapper: React.FunctionComponent<{
   });
 
   return (
+    <MediaQueryWrapper
+      state={state}
+      history={props.history}
+      observer={props.observer}
+      observable={props.observable}
+    />
+  );
+};
+
+const MediaQueryWrapper: React.FunctionComponent<{
+  state: PageState;
+  observable: Observable<PageState>;
+  observer: Observer<Event>;
+  history: History;
+}> = (props) => {
+  const isSmartPhone = useMediaQuery({ maxDeviceWidth: 768 });
+
+  return (
     <React.Suspense fallback={<div>loading</div>}>
       {isSmartPhone ? (
-        <SP state={state} observer={props.observer} />
+        <SP state={props.state} observer={props.observer} />
       ) : (
-        <PC state={state} observer={props.observer} />
+        <PC state={props.state} observer={props.observer} />
       )}
     </React.Suspense>
   );
