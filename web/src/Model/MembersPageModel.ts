@@ -493,21 +493,20 @@ export async function onEditSave(
     }
   } else {
     const prev = getState();
-      const next: PageState = {
-        ...prev,
-        editTask: undefined,
-        taskSummaries: convertTaskSummariesType(
-          restoreFromStorage(storageService)
-        ),
-        toast: {
-          type: "edit redo",
-          taskID: taskID,
-          title: nextTitle,
-          body: nextBody,
-        },
-      };
-      observer.next(next);
-
+    const next: PageState = {
+      ...prev,
+      editTask: undefined,
+      taskSummaries: convertTaskSummariesType(
+        restoreFromStorage(storageService)
+      ),
+      toast: {
+        type: "edit redo",
+        taskID: taskID,
+        title: nextTitle,
+        body: nextBody,
+      },
+    };
+    observer.next(next);
   }
 }
 
@@ -723,7 +722,8 @@ export async function onToastUndo(
   if (event.type !== "toast / edit redo-undo") return false;
 
   // undoコマンドが打てるということはここにデータがあるはず
-  const { taskID, title, body } = getState().toast! as {
+  const prevToast = getState().toast;
+  const { taskID, title, body } = prevToast! as {
     taskID: string;
     title: string;
     body: string;
@@ -731,12 +731,14 @@ export async function onToastUndo(
   {
     const prev = getState();
     const updatingTaskSummaries = prev.taskSummaries.map(
-      (t): TaskSummary => (t.id === taskID ? { ...t, title: title } : t)
+      (t): TaskSummary =>
+        t.id === taskID ? { ...t, title: title, updating: true } : t
     );
     const next: PageState = {
       ...prev,
       editTask: undefined,
       taskSummaries: updatingTaskSummaries,
+      toast: undefined,
     };
     observer.next(next);
   }
@@ -762,6 +764,7 @@ export async function onToastUndo(
       taskSummaries: convertTaskSummariesType(
         restoreFromStorage(storageService)
       ),
+      toast: prevToast,
     };
     observer.next(next);
   }
@@ -789,19 +792,22 @@ export async function onUndoProgress(
   const prev = getState();
 
   // undoコマンドが打てるということはここにデータがあるはず
-  const { taskID, from } = prev.toast! as {
+  const prevToast = prev.toast;
+  const { taskID, from } = prevToast! as {
     taskID: string;
     from: ProgressStatus;
   };
 
   const updatingTaskSummaries = prev.taskSummaries.map(
-    (t): TaskSummary => (t.id === taskID ? { ...t, progress: from, updating: true } : t)
+    (t): TaskSummary =>
+      t.id === taskID ? { ...t, progress: from, updating: true } : t
   );
 
   const next: PageState = {
     ...prev,
     editTask: undefined,
     taskSummaries: updatingTaskSummaries,
+    toast: undefined,
   };
   observer.next(next);
 
@@ -824,6 +830,7 @@ export async function onUndoProgress(
       taskSummaries: convertTaskSummariesType(
         restoreFromStorage(storageService)
       ),
+      toast: prevToast,
     };
     observer.next(next);
   }
@@ -840,19 +847,22 @@ export async function onUndoTrash(
   const prev = getState();
 
   // undoコマンドが打てるということはここにデータがあるはず
-  const { taskID, from } = prev.toast! as {
+  const prevToast = prev.toast;
+  const { taskID, from } = prevToast! as {
     taskID: string;
     from: TrashStatus;
   };
 
   const updatingTaskSummaries = prev.taskSummaries.map(
-    (t): TaskSummary => (t.id === taskID ? { ...t, trash: from, updating: true } : t)
+    (t): TaskSummary =>
+      t.id === taskID ? { ...t, trash: from, updating: true } : t
   );
 
   const next: PageState = {
     ...prev,
     editTask: undefined,
     taskSummaries: updatingTaskSummaries,
+    toast: undefined,
   };
   observer.next(next);
 
@@ -875,6 +885,7 @@ export async function onUndoTrash(
       taskSummaries: convertTaskSummariesType(
         restoreFromStorage(storageService)
       ),
+      toast: prevToast,
     };
     observer.next(next);
   }
