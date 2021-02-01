@@ -4,25 +4,26 @@ import { HttpService, StorageService } from "../Service/Service";
 import { Subject } from "rxjs";
 import { map, toArray } from "rxjs/operators";
 import {
+  onListTaskComplete,
   onNewTaskSubmit,
   onTitleInput,
   openNewTaskPage,
 } from "./MembersPageModel";
-import { PostTask, TaskSummary } from "../Types/Rest";
+import { PostTask, ProgressStatus, TaskSummary } from "../Types/Rest";
 import { createMemoryHistory } from "history";
 
-const defaultState: PageState = {
-  taskSummaries: [],
-  newTask: {
-    title: "",
-    body: "",
-    submitting: false,
-  },
-};
-
-const createDefaultState = () => defaultState;
-
 describe("新規タスク作成ページ", () => {
+  const defaultState: PageState = {
+    taskSummaries: [],
+    newTask: {
+      title: "",
+      body: "",
+      submitting: false,
+    },
+  };
+
+  const createDefaultState = () => defaultState;
+
   it("ページを開いた", async () => {
     const event: Event = {
       type: "new task / open",
@@ -151,6 +152,112 @@ describe("新規タスク作成ページ", () => {
       );
       observer.complete();
       expect(await p).toStrictEqual([null, { type: "new task submit error" }]);
+    });
+  });
+});
+
+describe("進捗変更", () => {
+  const defaultState: PageState = {
+    taskSummaries: [
+      {
+        id: "task1",
+        updating: false,
+        trash: "",
+        title: "タスク１",
+        time: 0,
+        progress: "continue",
+      },
+    ],
+    newTask: {
+      title: "",
+      body: "",
+      submitting: false,
+    },
+  };
+
+  const createDefaultState = () => defaultState;
+
+  function getStorageServiceMock(): StorageService {
+    const Class = jest.fn<StorageService, []>().mockImplementation(
+      () =>
+        <StorageService>{
+          putCurrentTasksResponse(json: string) {},
+          getPrevTasksResponse(): string | null {
+            return JSON.stringify(defaultState.taskSummaries);
+          },
+        }
+    );
+    return new Class();
+  }
+
+  function createHttpServiceMock(success: boolean): HttpService {
+    const messageSpy = jest.fn(() => {});
+    const Class = jest.fn<HttpService, []>().mockImplementation(
+      () =>
+        <HttpService>{
+          message: messageSpy as () => void,
+          putTaskProgressStatus: async (
+            taskID: string,
+            status: ProgressStatus
+          ) => {
+            return success;
+          },
+          getTaskSummaries: async (): Promise<TaskSummary[]> => [],
+        }
+    );
+    return new Class();
+  }
+
+  it("完了にする　成功", async () => {
+    const event: Event = {
+      type: "list / complete",
+      taskID: "task1",
+    };
+    const observer = new Subject<PageState>();
+    const s = observer.pipe(toArray());
+    const p = s.toPromise();
+    await onListTaskComplete(
+      createDefaultState,
+      event,
+      observer,
+      createHttpServiceMock(true),
+      getStorageServiceMock()
+    );
+    observer.complete();
+    const resList = await p;
+    expect(resList[0].taskSummaries[0].updating).toBeTruthy();
+    expect(resList[0].taskSummaries[0].progress).toBe("complete");
+    expect(resList[1].toast).toStrictEqual({
+      type: "progress updated",
+      taskID: "task1",
+      from: "continue",
+    });
+  });
+
+  it("完了にする　失敗", async () => {
+    const event: Event = {
+      type: "list / complete",
+      taskID: "task1",
+    };
+    const observer = new Subject<PageState>();
+    const s = observer.pipe(toArray());
+    const p = s.toPromise();
+    await onListTaskComplete(
+      createDefaultState,
+      event,
+      observer,
+      createHttpServiceMock(false),
+      getStorageServiceMock()
+    );
+    observer.complete();
+    const resList = await p;
+    expect(resList[0].taskSummaries[0].updating).toBeTruthy();
+    expect(resList[0].taskSummaries[0].progress).toBe("complete");
+    expect(resList[1].taskSummaries).toStrictEqual(defaultState.taskSummaries);
+    expect(resList[1].toast).toStrictEqual({
+      type: "progress update error",
+      taskID: "task1",
+      to: "complete",
     });
   });
 });
