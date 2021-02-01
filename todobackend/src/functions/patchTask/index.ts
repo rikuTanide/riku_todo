@@ -1,5 +1,5 @@
 export default {
-  handler: `src/functions/putTask/handler.main`,
+  handler: `src/functions/patchTask/handler.main`,
   events: [
     {
       http: {

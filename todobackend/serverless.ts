@@ -6,7 +6,7 @@ import {
   postTask,
   getTasks,
   getTask,
-  putTask,
+  patchTask,
   deleteTask,
 } from "./src/functions";
 
@@ -60,7 +60,7 @@ const serverlessConfiguration: AWS = {
     hello,
     getTasks,
     getTask,
-    putTask,
+    patchTask,
     deleteTask,
     postTask,
     ...websocket,
