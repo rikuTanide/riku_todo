@@ -32,3 +32,8 @@ export interface PostTask {
   progress: ProgressStatus;
   trash: TrashStatus;
 }
+
+export interface PutTask {
+  title: string;
+  body: string;
+}

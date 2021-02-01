@@ -6,7 +6,7 @@ import {
   User,
 } from "./Service";
 import { AxiosInstance } from "axios";
-import { PostTask, Task, TaskSummary } from "../Types/Rest";
+import { PostTask, Task, TaskSummary, PutTask } from "../Types/Rest";
 import {
   AuthenticationDetails,
   CognitoUser,
@@ -102,9 +102,13 @@ export class HttpServiceImpl implements HttpService {
     }
   }
 
-  public async putTask(task: Task): Promise<boolean> {
+  public async putTask(id: string, title: string, body: string): Promise<boolean> {
     try {
-      const res = await this.axios.put(`tasks/${task.id}`, task);
+      const payload: PutTask = {
+        title: title,
+        body: body,
+      }
+      const res = await this.axios.patch(`tasks/${id}`, payload);
       return res.status === 200;
     } catch (e) {
       console.log(e);

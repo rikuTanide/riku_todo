@@ -4,9 +4,7 @@ import { middyfy } from "@libs/lambda";
 import { formatJSONResponse } from "@libs/apiGateway";
 
 const handler = async (event) => {
-  console.log(event.pathParameters);
   const id = event.pathParameters.taskID;
-  console.log(id);
   const db = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
   const param: AWS.DynamoDB.GetItemInput = {
     TableName: "tasks",
