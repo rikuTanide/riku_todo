@@ -23,16 +23,13 @@ export interface EditTask {
 
 export type Toast =
   | { type: "new task submit error" }
-  | { type: "update task submit error" }
   | { type: "fetch detail error" }
-  | { type: "edit undo"; task: Task }
-  | { type: "edit redo"; task: Task }
-  | {
-      type: "list status change error";
-      taskID: string;
-      trash: TrashStatus;
-      progress: ProgressStatus;
-    }
+  | { type: "edit undo"; taskID: string; title: string; body: string }
+  | { type: "edit redo"; taskID: string; title: string; body: string }
+  | { type: "progress updated"; taskID: string; from: ProgressStatus }
+  | { type: "progress update error"; taskID: string; to: ProgressStatus }
+  | { type: "trash updated"; taskID: string; from: TrashStatus }
+  | { type: "trash update error"; taskID: string; to: TrashStatus }
   | { type: "delete failure" }
   | { type: "deleted" };
 

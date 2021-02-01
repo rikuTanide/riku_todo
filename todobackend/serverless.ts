@@ -8,6 +8,8 @@ import {
   getTask,
   patchTask,
   deleteTask,
+  putTaskProgress,
+  putTaskTrash,
 } from "./src/functions";
 
 const serverlessConfiguration: AWS = {
@@ -63,6 +65,8 @@ const serverlessConfiguration: AWS = {
     patchTask,
     deleteTask,
     postTask,
+    putTaskProgress,
+    putTaskTrash,
     ...websocket,
   },
 };

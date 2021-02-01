@@ -16,8 +16,9 @@ export type Event =
   | { type: "list / trash"; taskID: string }
   | { type: "list / restore"; taskID: string }
   | { type: "toast / close" }
-  | { type: "toast / redo-undo" }
-  | { type: "toast / update status" }
+  | { type: "toast / edit redo-undo" }
+  | { type: "toast / undo progress" }
+  | { type: "toast / undo trash" }
   | { type: "do update tasks" }
   | { type: "delete task"; taskID: string }
   | { type: "logout" };

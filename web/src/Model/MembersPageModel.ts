@@ -87,8 +87,9 @@ export function createHandler(
       storageService
     );
     onToastUndo(getState, event, stateSubject, httpService, storageService);
-    onUpdateStatus(getState, event, stateSubject, httpService, storageService);
     onToastClose(getState, event, stateSubject);
+    onUndoProgress(getState, event, stateSubject, httpService, storageService);
+    onUndoTrash(getState, event, stateSubject, httpService, storageService);
     doUpdateTasks(getState, event, stateSubject, httpService, storageService);
     logout(getState, event, loginService);
     deleteTask(
@@ -441,13 +442,19 @@ export async function onEditSave(
   history: History
 ) {
   if (event.type !== "detail / save") return false;
-  const prev = getState();
 
-  const prevEdit = prev.editTask!;
+  const prev = getState();
+  const editTask = prev.editTask!;
+
+  const taskID = editTask.id;
+  const prevTitle = editTask.original.title;
+  const prevBody = editTask.original.body;
+
+  const nextTitle = editTask.next.title;
+  const nextBody = editTask.next.body;
+
   const updatingTaskSummaries = prev.taskSummaries.map((t) =>
-    t.id === prevEdit.id
-      ? { ...t, updating: true, title: prevEdit.next.title }
-      : t
+    t.id === taskID ? { ...t, updating: true, title: nextTitle } : t
   );
   const next: PageState = {
     ...prev,
@@ -456,7 +463,7 @@ export async function onEditSave(
   };
   observer.next(next);
   history.push("/");
-  const ok = httpService.putTask(prevEdit.next.id, prevEdit.next.title, prevEdit.next.body);
+  const ok = await httpService.patchTask(taskID, nextTitle, nextBody);
   httpService.message();
   if (ok) {
     {
@@ -464,7 +471,12 @@ export async function onEditSave(
       const next: PageState = {
         ...prev,
         editTask: undefined,
-        toast: { type: "edit undo", task: prevEdit.original },
+        toast: {
+          type: "edit undo",
+          taskID: taskID,
+          title: prevTitle,
+          body: prevBody,
+        },
       };
       observer.next(next);
     }
@@ -481,17 +493,21 @@ export async function onEditSave(
     }
   } else {
     const prev = getState();
-    {
       const next: PageState = {
         ...prev,
         editTask: undefined,
         taskSummaries: convertTaskSummariesType(
           restoreFromStorage(storageService)
         ),
-        toast: { type: "edit redo", task: prevEdit.original },
+        toast: {
+          type: "edit redo",
+          taskID: taskID,
+          title: nextTitle,
+          body: nextBody,
+        },
       };
       observer.next(next);
-    }
+
   }
 }
 
@@ -506,77 +522,16 @@ export async function onListTaskComplete(
   storageService: StorageService
 ) {
   if (event.type !== "list / complete") return false;
-  const prev = getState();
-
-  const updatingTaskSummaries = prev.taskSummaries.map(
-    (t): TaskSummary =>
-      t.id === event.taskID ? { ...t, progress: "complete", updating: true } : t
+  const taskID = event.taskID;
+  await onListTaskProgressUpdate(
+    taskID,
+    "continue",
+    "complete",
+    getState,
+    observer,
+    httpService,
+    storageService
   );
-  const next: PageState = {
-    ...prev,
-    editTask: undefined,
-    taskSummaries: updatingTaskSummaries,
-  };
-  observer.next(next);
-
-  // ここはしょうがない
-  const prevTask = await httpService.getTask(event.taskID);
-  if (!prevTask) {
-    const prev = getState();
-    const next: PageState = {
-      ...prev,
-      editTask: undefined,
-      toast: {
-        type: "list status change error",
-        taskID: event.taskID,
-        progress: "complete",
-        trash: "",
-      },
-      taskSummaries: convertTaskSummariesType(
-        restoreFromStorage(storageService)
-      ),
-    };
-    observer.next(next);
-    return;
-  }
-
-  const nextTask: Task = { ...prevTask, progress: "complete" };
-  // @ts-ignore
-  const ok = await httpService.putTask(nextTask);
-  httpService.message();
-
-  if (ok) {
-    const prev = getState();
-    {
-      const next: PageState = {
-        ...prev,
-        editTask: undefined,
-        toast: { type: "edit undo", task: prevTask },
-      };
-      observer.next(next);
-    }
-
-    {
-      const tasks = await fetchTasks(httpService, storageService);
-      const prev = getState();
-      const next: PageState = {
-        ...prev,
-        editTask: undefined,
-        taskSummaries: tasks,
-      };
-      observer.next(next);
-    }
-  } else {
-    const next: PageState = {
-      ...prev,
-      editTask: undefined,
-      taskSummaries: convertTaskSummariesType(
-        restoreFromStorage(storageService)
-      ),
-      toast: { type: "edit redo", task: nextTask },
-    };
-    observer.next(next);
-  }
 }
 
 export async function onListTaskContinue(
@@ -587,52 +542,51 @@ export async function onListTaskContinue(
   storageService: StorageService
 ) {
   if (event.type !== "list / continue") return false;
-  const prev = getState();
 
-  const updatingTaskSummaries = prev.taskSummaries.map(
-    (t): TaskSummary =>
-      t.id === event.taskID ? { ...t, progress: "continue", updating: true } : t
+  const taskID = event.taskID;
+  await onListTaskProgressUpdate(
+    taskID,
+    "complete",
+    "continue",
+    getState,
+    observer,
+    httpService,
+    storageService
   );
-  const next: PageState = {
-    ...prev,
-    editTask: undefined,
-    taskSummaries: updatingTaskSummaries,
-  };
-  observer.next(next);
+}
 
-  // ここはしょうがない
-  const prevTask = await httpService.getTask(event.taskID);
-  if (!prevTask) {
+async function onListTaskProgressUpdate(
+  taskID: string,
+  from: ProgressStatus,
+  to: ProgressStatus,
+  getState: GetState,
+  observer: StateObserver,
+  httpService: HttpService,
+  storageService: StorageService
+) {
+  {
     const prev = getState();
+    const updatingTaskSummaries = prev.taskSummaries.map(
+      (t): TaskSummary =>
+        t.id === taskID ? { ...t, progress: to, updating: true } : t
+    );
     const next: PageState = {
       ...prev,
       editTask: undefined,
-      toast: {
-        type: "list status change error",
-        taskID: event.taskID,
-        progress: "continue",
-        trash: "",
-      },
-      taskSummaries: convertTaskSummariesType(
-        restoreFromStorage(storageService)
-      ),
+      taskSummaries: updatingTaskSummaries,
     };
     observer.next(next);
-    return;
   }
-
-  const nextTask: Task = { ...prevTask, progress: "continue" };
-  // @ts-ignore
-  const ok = await httpService.putTask(nextTask);
+  const ok = await httpService.putTaskProgressStatus(taskID, to);
   httpService.message();
 
   if (ok) {
+    const prev = getState();
     {
-      const prev = getState();
       const next: PageState = {
         ...prev,
         editTask: undefined,
-        toast: { type: "edit undo", task: prevTask },
+        toast: { type: "progress updated", taskID: taskID, from: from },
       };
       observer.next(next);
     }
@@ -648,13 +602,14 @@ export async function onListTaskContinue(
       observer.next(next);
     }
   } else {
+    const prev = getState();
     const next: PageState = {
       ...prev,
       editTask: undefined,
       taskSummaries: convertTaskSummariesType(
         restoreFromStorage(storageService)
       ),
-      toast: { type: "edit redo", task: nextTask },
+      toast: { type: "progress update error", taskID: taskID, to: to },
     };
     observer.next(next);
   }
@@ -668,79 +623,15 @@ export async function onListTaskTrash(
   storageService: StorageService
 ) {
   if (event.type !== "list / trash") return false;
-  const prev = getState();
-
-  const updatingTaskSummaries = prev.taskSummaries.map(
-    (t): TaskSummary =>
-      t.id === event.taskID ? { ...t, trash: "trash", updating: true } : t
+  await onListTaskTrashUpdate(
+    event.taskID,
+    "",
+    "trash",
+    getState,
+    observer,
+    httpService,
+    storageService
   );
-  const next: PageState = {
-    ...prev,
-    editTask: undefined,
-    taskSummaries: updatingTaskSummaries,
-  };
-  observer.next(next);
-
-  // ここはしょうがない
-  const prevTask = await httpService.getTask(event.taskID);
-  if (!prevTask) {
-    const prev = getState();
-    const nextProgress = prev.taskSummaries.find((t) => t.id === event.taskID)!
-      .progress;
-    const next: PageState = {
-      ...prev,
-      editTask: undefined,
-      toast: {
-        type: "list status change error",
-        taskID: event.taskID,
-        progress: nextProgress,
-        trash: "trash",
-      },
-      taskSummaries: convertTaskSummariesType(
-        restoreFromStorage(storageService)
-      ),
-    };
-    observer.next(next);
-    return;
-  }
-
-  const nextTask: Task = { ...prevTask, trash: "trash" };
-  // @ts-ignore
-  const ok = await httpService.putTask(nextTask);
-  httpService.message();
-
-  if (ok) {
-    {
-      const prev = getState();
-      const next: PageState = {
-        ...prev,
-        editTask: undefined,
-        toast: { type: "edit undo", task: prevTask },
-      };
-      observer.next(next);
-    }
-
-    {
-      const tasks = await fetchTasks(httpService, storageService);
-      const prev = getState();
-      const next: PageState = {
-        ...prev,
-        editTask: undefined,
-        taskSummaries: tasks,
-      };
-      observer.next(next);
-    }
-  } else {
-    const next: PageState = {
-      ...prev,
-      editTask: undefined,
-      taskSummaries: convertTaskSummariesType(
-        restoreFromStorage(storageService)
-      ),
-      toast: { type: "edit redo", task: nextTask },
-    };
-    observer.next(next);
-  }
 }
 
 export async function onListTaskRestore(
@@ -751,54 +642,49 @@ export async function onListTaskRestore(
   storageService: StorageService
 ) {
   if (event.type !== "list / restore") return false;
-  const prev = getState();
-
-  const updatingTaskSummaries = prev.taskSummaries.map(
-    (t): TaskSummary =>
-      t.id === event.taskID ? { ...t, trash: "", updating: true } : t
+  await onListTaskTrashUpdate(
+    event.taskID,
+    "trash",
+    "",
+    getState,
+    observer,
+    httpService,
+    storageService
   );
-  const next: PageState = {
-    ...prev,
-    editTask: undefined,
-    taskSummaries: updatingTaskSummaries,
-  };
-  observer.next(next);
+}
 
-  // ここはしょうがない
-  const prevTask = await httpService.getTask(event.taskID);
-  if (!prevTask) {
+async function onListTaskTrashUpdate(
+  taskID: string,
+  from: TrashStatus,
+  to: TrashStatus,
+  getState: GetState,
+  observer: StateObserver,
+  httpService: HttpService,
+  storageService: StorageService
+) {
+  {
     const prev = getState();
-    const nextProgress = prev.taskSummaries.find((t) => t.id === event.taskID)!
-      .progress;
+    const updatingTaskSummaries = prev.taskSummaries.map(
+      (t): TaskSummary =>
+        t.id === taskID ? { ...t, trash: to, updating: true } : t
+    );
     const next: PageState = {
       ...prev,
       editTask: undefined,
-      toast: {
-        type: "list status change error",
-        taskID: event.taskID,
-        progress: nextProgress,
-        trash: "",
-      },
-      taskSummaries: convertTaskSummariesType(
-        restoreFromStorage(storageService)
-      ),
+      taskSummaries: updatingTaskSummaries,
     };
     observer.next(next);
-    return;
   }
-
-  const nextTask: Task = { ...prevTask, trash: "" };
-  // @ts-ignore
-  const ok = await httpService.putTask(nextTask);
+  const ok = await httpService.putTaskTrashStatus(taskID, to);
   httpService.message();
 
   if (ok) {
+    const prev = getState();
     {
-      const prev = getState();
       const next: PageState = {
         ...prev,
         editTask: undefined,
-        toast: { type: "edit undo", task: prevTask },
+        toast: { type: "trash updated", taskID: taskID, from: from },
       };
       observer.next(next);
     }
@@ -814,13 +700,14 @@ export async function onListTaskRestore(
       observer.next(next);
     }
   } else {
+    const prev = getState();
     const next: PageState = {
       ...prev,
       editTask: undefined,
       taskSummaries: convertTaskSummariesType(
         restoreFromStorage(storageService)
       ),
-      toast: { type: "edit redo", task: nextTask },
+      toast: { type: "trash update error", taskID: taskID, to: to },
     };
     observer.next(next);
   }
@@ -833,38 +720,28 @@ export async function onToastUndo(
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type !== "toast / redo-undo") return false;
-  const prev = getState();
+  if (event.type !== "toast / edit redo-undo") return false;
 
   // undoコマンドが打てるということはここにデータがあるはず
-  const nextTask: Task = (prev.toast! as { task: Task }).task;
-  const taskID = nextTask.id;
-  const nextTaskSummary: TaskSummary = {
-    id: nextTask.id,
-    title: nextTask.title,
-    trash: nextTask.trash,
-    updating: true,
-    progress: nextTask.progress,
-    time: nextTask.time,
+  const { taskID, title, body } = getState().toast! as {
+    taskID: string;
+    title: string;
+    body: string;
   };
-  const updatingTaskSummaries = prev.taskSummaries.map(
-    (t): TaskSummary => (t.id === taskID ? nextTaskSummary : t)
-  );
-  const next: PageState = {
-    ...prev,
-    editTask: undefined,
-    taskSummaries: updatingTaskSummaries,
-  };
-  observer.next(next);
-
-  // ここはしょうがない
-  const prevTask = await httpService.getTask(taskID);
-  if (!prevTask) {
-    return;
+  {
+    const prev = getState();
+    const updatingTaskSummaries = prev.taskSummaries.map(
+      (t): TaskSummary => (t.id === taskID ? { ...t, title: title } : t)
+    );
+    const next: PageState = {
+      ...prev,
+      editTask: undefined,
+      taskSummaries: updatingTaskSummaries,
+    };
+    observer.next(next);
   }
 
-  // @ts-ignore
-  const ok = await httpService.putTask(nextTask);
+  const ok = await httpService.patchTask(taskID, title, body);
   httpService.message();
 
   if (ok) {
@@ -874,16 +751,17 @@ export async function onToastUndo(
       ...prev,
       editTask: undefined,
       taskSummaries: tasks,
+      toast: undefined,
     };
     observer.next(next);
   } else {
+    const prev = getState();
     const next: PageState = {
       ...prev,
       editTask: undefined,
       taskSummaries: convertTaskSummariesType(
         restoreFromStorage(storageService)
       ),
-      toast: { type: "edit redo", task: nextTask },
     };
     observer.next(next);
   }
@@ -900,28 +778,26 @@ export async function onToastClose(
   observer.next(next);
 }
 
-export async function onUpdateStatus(
+export async function onUndoProgress(
   getState: GetState,
   event: Event,
   observer: StateObserver,
   httpService: HttpService,
   storageService: StorageService
 ) {
-  if (event.type !== "toast / update status") return false;
+  if (event.type !== "toast / undo progress") return false;
   const prev = getState();
 
   // undoコマンドが打てるということはここにデータがあるはず
-  const nextTask = prev.toast! as {
+  const { taskID, from } = prev.toast! as {
     taskID: string;
-    progress: ProgressStatus;
-    trash: TrashStatus;
+    from: ProgressStatus;
   };
+
   const updatingTaskSummaries = prev.taskSummaries.map(
-    (t): TaskSummary =>
-      t.id === nextTask.taskID
-        ? { ...t, trash: nextTask.trash, progress: nextTask.progress }
-        : t
+    (t): TaskSummary => (t.id === taskID ? { ...t, progress: from, updating: true } : t)
   );
+
   const next: PageState = {
     ...prev,
     editTask: undefined,
@@ -929,10 +805,19 @@ export async function onUpdateStatus(
   };
   observer.next(next);
 
-  // ここはしょうがない
-  const prevTask = await httpService.getTask(nextTask.taskID);
-  if (!prevTask) {
+  const ok = await httpService.putTaskProgressStatus(taskID, from);
+  httpService.message();
+
+  if (ok) {
+    const tasks = await fetchTasks(httpService, storageService);
     const prev = getState();
+    const next: PageState = {
+      ...prev,
+      taskSummaries: tasks,
+      toast: undefined,
+    };
+    observer.next(next);
+  } else {
     const next: PageState = {
       ...prev,
       editTask: undefined,
@@ -941,15 +826,37 @@ export async function onUpdateStatus(
       ),
     };
     observer.next(next);
-    return;
   }
+}
 
-  // @ts-ignore
-  const ok = await httpService.putTask({
-    ...prevTask,
-    trash: nextTask.trash,
-    progress: nextTask.progress,
-  });
+export async function onUndoTrash(
+  getState: GetState,
+  event: Event,
+  observer: StateObserver,
+  httpService: HttpService,
+  storageService: StorageService
+) {
+  if (event.type !== "toast / undo trash") return false;
+  const prev = getState();
+
+  // undoコマンドが打てるということはここにデータがあるはず
+  const { taskID, from } = prev.toast! as {
+    taskID: string;
+    from: TrashStatus;
+  };
+
+  const updatingTaskSummaries = prev.taskSummaries.map(
+    (t): TaskSummary => (t.id === taskID ? { ...t, trash: from, updating: true } : t)
+  );
+
+  const next: PageState = {
+    ...prev,
+    editTask: undefined,
+    taskSummaries: updatingTaskSummaries,
+  };
+  observer.next(next);
+
+  const ok = await httpService.putTaskTrashStatus(taskID, from);
   httpService.message();
 
   if (ok) {

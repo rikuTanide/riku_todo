@@ -1,5 +1,11 @@
 import { Observable } from "rxjs";
-import { PostTask, Task, TaskSummary } from "../Types/Rest";
+import {
+  PostTask,
+  ProgressStatus,
+  Task,
+  TaskSummary,
+  TrashStatus,
+} from "../Types/Rest";
 
 export type CurrentTimeService = () => Date;
 
@@ -17,7 +23,12 @@ export interface HttpService {
   getTaskSummaries(): Promise<TaskSummary[] | null>;
   getTask(id: string): Promise<Task | null>;
   postTask(task: PostTask): Promise<boolean>;
-  putTask(id: string, title: string, body: string): Promise<boolean>;
+  patchTask(id: string, title: string, body: string): Promise<boolean>;
+  putTaskProgressStatus(
+    id: string,
+    progressStatus: ProgressStatus
+  ): Promise<boolean>;
+  putTaskTrashStatus(id: string, trashStatus: TrashStatus): Promise<boolean>;
   deleteTask(taskID: string): Promise<boolean>;
 }
 

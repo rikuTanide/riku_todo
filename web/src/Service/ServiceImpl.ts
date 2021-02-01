@@ -6,7 +6,14 @@ import {
   User,
 } from "./Service";
 import { AxiosInstance } from "axios";
-import { PostTask, Task, TaskSummary, PutTask } from "../Types/Rest";
+import {
+  PostTask,
+  Task,
+  TaskSummary,
+  PutTask,
+  ProgressStatus,
+  TrashStatus,
+} from "../Types/Rest";
 import {
   AuthenticationDetails,
   CognitoUser,
@@ -102,12 +109,16 @@ export class HttpServiceImpl implements HttpService {
     }
   }
 
-  public async putTask(id: string, title: string, body: string): Promise<boolean> {
+  public async patchTask(
+    id: string,
+    title: string,
+    body: string
+  ): Promise<boolean> {
     try {
       const payload: PutTask = {
         title: title,
         body: body,
-      }
+      };
       const res = await this.axios.patch(`tasks/${id}`, payload);
       return res.status === 200;
     } catch (e) {
@@ -119,6 +130,48 @@ export class HttpServiceImpl implements HttpService {
   public async deleteTask(taskID: string): Promise<boolean> {
     try {
       const res = await this.axios.delete(`tasks/${taskID}`);
+      return res.status === 200;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
+
+  public async putTaskProgressStatus(
+    id: string,
+    progressStatus: ProgressStatus
+  ): Promise<boolean> {
+    try {
+      const res = await this.axios.put(
+        `tasks/${id}/progress`,
+        JSON.stringify(progressStatus),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return res.status === 200;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
+
+  public async putTaskTrashStatus(
+    id: string,
+    trashStatus: TrashStatus
+  ): Promise<boolean> {
+    try {
+      const res = await this.axios.put(
+        `tasks/${id}/trash`,
+        JSON.stringify(trashStatus),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return res.status === 200;
     } catch (e) {
       console.log(e);

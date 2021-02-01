@@ -5,3 +5,5 @@ export { default as getTasks } from "./getTasks";
 export { default as getTask } from "./getTask";
 export { default as patchTask } from "./patchTask";
 export { default as deleteTask } from "./deleteTask";
+export { default as putTaskProgress } from "./putTaskProgress";
+export { default as putTaskTrash } from "./putTaskTrash";

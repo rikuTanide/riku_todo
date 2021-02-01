@@ -12,22 +12,27 @@ export const Toast: React.FunctionComponent<{
   toast: ToastState;
   observer: Observer<Event>;
 }> = (props) => {
-  const redo = () => props.observer.next({ type: "toast / redo-undo" });
-  const listRedo = () => props.observer.next({ type: "toast / update status" });
   const close = () => props.observer.next({ type: "toast / close" });
 
-  const toastType = props.toast.type;
-  if (toastType === "edit redo") {
+  const toast = props.toast;
+
+  if (toast.type === "new task submit error") {
     return (
       <Snackbar open={true} autoHideDuration={6000} onClose={close}>
-        <Alert severity="success">
-          保存に失敗しました。
-          <button onClick={redo}>再実行</button>
-        </Alert>
+        <Alert severity="error">作成できませんでした。</Alert>
       </Snackbar>
     );
   }
-  if (toastType === "edit undo") {
+  if (toast.type === "fetch detail error") {
+    return (
+      <Snackbar open={true} autoHideDuration={6000} onClose={close}>
+        <Alert severity="error">取得できませんでした。</Alert>
+      </Snackbar>
+    );
+  }
+
+  if (toast.type === "edit undo") {
+    const undo = () => props.observer.next({ type: "toast / edit redo-undo" });
     return (
       <Snackbar open={true} autoHideDuration={6000} onClose={close}>
         <Alert severity="success">
@@ -35,51 +40,94 @@ export const Toast: React.FunctionComponent<{
             <CancelIcon />
           </IconButton>
           変更しました
-          <IconButton onClick={redo}>
+          <IconButton onClick={undo}>
             <UndoIcon />
           </IconButton>
         </Alert>
       </Snackbar>
     );
   }
-  if (toastType === "fetch detail error") {
+
+  if (toast.type === "edit redo") {
+    const redo = () => props.observer.next({ type: "toast / edit redo-undo" });
     return (
-      <div>
-        <button onClick={close}>×</button>取得できませんでした。
-      </div>
+      <Snackbar open={true} autoHideDuration={6000} onClose={close}>
+        <Alert severity="error">
+          保存に失敗しました。
+          <button onClick={redo}>再実行</button>
+        </Alert>
+      </Snackbar>
     );
   }
-  if (toastType === "list status change error") {
+
+  if (toast.type === "progress updated") {
+    const undo = () => props.observer.next({ type: "toast / undo progress" });
     return (
-      <div>
-        <button onClick={close}>×</button>保存できませんでした
-        <button onClick={listRedo}>再実行</button>
-      </div>
+      <Snackbar open={true} autoHideDuration={6000} onClose={close}>
+        <Alert severity="success">
+          変更しました。
+          <button onClick={undo}>戻す</button>
+        </Alert>
+      </Snackbar>
     );
   }
-  if (toastType === "new task submit error") {
+
+  if (toast.type === "progress update error") {
+    const taskID = toast.taskID;
+    const to = toast.to;
+    const redo = () => {
+      if (to == "continue")
+        props.observer.next({ type: "list / continue", taskID: taskID });
+      else props.observer.next({ type: "list / complete", taskID: taskID });
+    };
     return (
-      <div>
-        <button onClick={close}>×</button>保存できませんでした
-      </div>
+      <Snackbar open={true} autoHideDuration={6000} onClose={close}>
+        <Alert severity="error">
+          変更に失敗しました。
+          <button onClick={redo}>再実行</button>
+        </Alert>
+      </Snackbar>
     );
   }
-  if (toastType === "update task submit error") {
+
+  if (toast.type === "trash updated") {
+    const undo = () => props.observer.next({ type: "toast / undo trash" });
     return (
-      <div>
-        <button onClick={close}>×</button>変更に失敗しました。
-        <button onClick={redo}>再実行</button>
-      </div>
+      <Snackbar open={true} autoHideDuration={6000} onClose={close}>
+        <Alert severity="success">
+          ゴミ箱に入れました。
+          <button onClick={undo}>戻す</button>
+        </Alert>
+      </Snackbar>
     );
   }
-  if (toastType === "deleted") {
+
+  if (toast.type === "trash update error") {
+    const taskID = toast.taskID;
+    const to = toast.to;
+    const redo = () => {
+      if (to == "")
+        props.observer.next({ type: "list / restore", taskID: taskID });
+      else props.observer.next({ type: "list / trash", taskID: taskID });
+    };
+    return (
+      <Snackbar open={true} autoHideDuration={6000} onClose={close}>
+        <Alert severity="error">
+          移動に失敗しました。
+          <button onClick={redo}>再実行</button>
+        </Alert>
+      </Snackbar>
+    );
+  }
+
+  if (toast.type === "deleted") {
     return (
       <Snackbar open={true} autoHideDuration={6000} onClose={close}>
         <Alert severity="success">削除しました。</Alert>
       </Snackbar>
     );
   }
-  if (toastType === "delete failure") {
+  if (toast.type === "delete failure") {
     return (
       <Snackbar open={true} autoHideDuration={6000} onClose={close}>
         <Alert severity="error">削除に失敗しました。</Alert>
