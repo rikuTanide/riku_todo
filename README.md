@@ -1,5 +1,5 @@
 # Rick ToDo
-ToDoアプリ
+トレロを参考にしたタスク管理アプリ
 
 ## 動作確認方法
 ### 公開アプリ
@@ -15,53 +15,59 @@ yarn start or yarn test
 
 ## 仕様
 
-### 共有範囲
- - ログイン必須
- - 全員で同じToDoリストを共有する
- - トレロのようなプロジェクトを分ける機能は作らない
- - ユーザーIDによってアクセス権限管理などもしない
-
 ### 機能
 
- - 会員登録
- - ログイン
- - ログアウト
- - ToDo作成
- - ToDo閲覧
- - ToDo編集
- - 一覧画面で進捗を変更
- - ToDo削除
- - 書き込みは他のブラウザに自動で反映される
+#### アプリケーションの概要
+  1. ログインする
+  1. タスクを登録
+  1. 進捗を入力
+  1. タスクはすべてのメンバーで共有される
 
-### ToDoの項目
- - タイトル
- - 本文
- - 完了/未完了
- - ゴミ箱    
- - 作成者のユーザーIDとnickname
- - 作成時刻
+![global_arch](docs/transition.png)
 
-### UI
+
+#### 機能＞会員機能
+   - 会員登録
+   - ログイン
+   - ログアウト
+#### 機能＞タスク入力機能
+   - 作成
+   - 閲覧
+   - 編集
+   - 進捗状態入力
+   - 削除
+#### UIのルール
  - レスポンシブ
    - PC版
    - スマホ版
-   - PC版とスマホ版のUIのコードは別々に用意しcode splitする
-   - PC版でもスマホ版でも同じURLは同じ意味のページを指すようにする
- - 極力楽観的UIを使う事で書き込み系の操作はUIをロックしない
- - 書き込み系の操作でネットワークエラーが起きた場合は  
-   再実行できる
- - トーストでUndoできるようにする事で
-   極力ダイアログは出さないようにする
- - 更新はWebSocketでほかのブラウザに通知され  
-   自動更新する
+   - PC版とスマホ版で同じURLが同じ意味のページを指すようにする
+ - 楽観的UI
+ - ネットワークエラーは再実行できる
+ - 確認ダイアログをださない
+ - Undo/Redoができる
+ - ブラウザ間で自動同期
 
-### Validation/エラーハンドル
- - サーバーから来たデータをajvで検証
+#### エラーハンドルのルール
+ - サーバーから来たJSONをajvで検証
  - ネットワークは10秒でタイムアウトとする
  - 書き込み中の文章はlocalStorageに保存し  
    リロードしても残るようにする
+---
+
+## 技術詳細
+![global_arch](docs/global_arch.png)
+
 
 ## 技術選定
+
+### サーバー・フロントエンド共通
+
+|目的|技術|
+|---|---|
+|言語|TypeScript|
+|テスト|Jest|
+|フォーマッター|Prettier|
+|JSONのバリデーション|Ajv|
 
 ### サーバーサイド
 
@@ -77,61 +83,83 @@ yarn start or yarn test
 
 |目的|技術|
 |---|---|
-|ログイン|Amazon Cognito|
-|言語|TypeScript|
+|会員機能|Amazon Cognito|
 |ビューライブラリ|React|
 |HttpClient|Axios|
 |UIフレームワーク|Material-UI|
 |イベントハンドリング|RxJS|
 
-### 共通
-
-|目的|技術|
-|---|---|
-|テスト|Jest|
-|フォーマッター|Prettier|
-|JSONのバリデーション|Ajv|
-
-### アーキテクチャ
+## フロントエンドのアーキテクチャ
 
 ### テーマ
 
- - ビューとビジネスロジックを完全に切り離す
- - ビューはStateに対する純粋関数にする
- - ビジネスロジックはPrev StateとEventを引数にNext Stateを返す純粋関数にする
+ - ビューとビジネスロジックを切り離す
+ - ビジネスロジックが純粋関数になるようにする
 
 ### 手段
+#### ビューとビジネスロジックを切り離すために
+ビューとビジネスロジックの接続点はRxJSのみ  
+- ビュー <-- 状態 -- ビジネスロジック  
+- ビュー -- 操作イベント --> ビジネスロジック  
 
- - ビューとビジネスロジックの接続点はRxJSのSubjectのみ
-   - ビュー <-- 状態 -- ビジネスロジック  
-   - ビュー -- 操作イベント --> ビジネスロジック
- - 純粋関数にならない部分はサービスとして引数でいれる
-     - ログイン
-     - HttpClient
-     - 現在時刻
-     - History API
-     - ローカルストレージ
+#### ビジネスロジックが純粋関数になるようにするために
+純粋関数にならない部分はサービスとして引数でいれる
+
+ - 現在時刻
+ - ログイン
+ - HttpClient
+ - History API
+ - ローカルストレージ
 
 ### テスト戦略
-#### UIのテスト
- *しない*
-#### 理由
+#### テスト戦略＞UIのテスト
+ *テストコードは書かない*
+##### 理由
  - 手数の割に得るものが少ない
  - f(state) = UIが維持できていれば実機確認が容易
 
-#### ビジネスロジックのテスト
+#### テスト戦略＞ビジネスロジックのテスト
 ##### 方針
 
 現在の状態と操作のイベントを引数に  
 次の状態を正しく返せているかと  
-正しく副作用を起こせているかをテスト。
+正しく副作用を起こせているかをテスト。  
 
-副作用のテストは各サービスのモックを作りJsetの機能でspy。
-    
-## 時間があれば作る
- - puppeteerでe2eテストをする
- - PCとスマホのコードをmedia queryで先読み
- 
+副作用のテストは各サービスのモックを作りJestの機能でspy。
+
+### コードの説明
+#### このアプリが持つ状態の一覧
+src/Types/State.ts PageState/LoginPageState
+#### このアプリで発生する操作イベント一覧
+src/Types/Event.ts Event/LoginPageEvent
+#### エントリーポイント
+src/index.ts
+#### 各サービスの実体化
+src/showMembersPage.tsx BindBusinessLogicWrapper
+#### RxJSを使ったビジネスロジックとUIの接続
+src/showMembersPage.tsx BindBusinessLogicWrapper
+#### 操作イベントを操作のハンドラに割り振る処理
+src/Model/MembersPageModel.ts createHandler#handler  
+src/Model/NonMembersPageModel.ts createHandler#handler  
+#### 各操作イベントのハンドラ
+src/Model/MembersPageModel.ts
+src/Model/NonMembersPageModel.ts
+#### 端末によるUIの切り替え
+src/showMembersPage.tsx MediaQueryWrapper
+
+### パフォーマンス対策
+
+#### Code Split
+PC用画面とスマホ用画面をのコードを分割
+
+#### メモ化
+どのような操作が行われようと  
+Taskオブジェクトの配列に変更がなければタスク一覧のView（以下ボード）の表示が変わることがない。  
+React.memoを使い、ボードをTaskの配列に対してメモ化する。  
+
+
+---
+
 ## ページ
 URLはハッシュURLを使う。
 理由：キャッシュ効率とサーバー側の設定項目削減のため
@@ -182,10 +210,36 @@ POST /tasks
 GET /tasks/:task_id
 
 ### タスク編集
-PUT /tasks/:task_id
-タイトル・本文・進捗変更などは同じAPIを使う
+PATCH /tasks/:task_id
+```
+{
+  "title": "タイトル",
+  "body": "本文"
+}
+```
 成功した場合は200
+
+### 進捗入力
+
+PUT /tasks/:task_id/progress
+```
+"continue" | "complete"
+```
+
+### ゴミ箱に入れる
+PUT /tasks/:task_id/trash
+```
+"" | "trash"
+```
+
 ### タスク削除
 DELETE /tasks/:task_id
+
 ### WebSocketエンドポイント
 何かメッセージを送ればすべてのWebSocket Connectionに空のメッセージが送られるようにする
+
+--- 
+## 時間があれば作る
+ - puppeteerでe2eテストをする
+ - PCとスマホのコードをmedia queryで先読み
+ 

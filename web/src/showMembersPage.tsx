@@ -25,21 +25,10 @@ const PC = React.lazy(() => import("./View/Members/PC/App"));
 const SP = React.lazy(() => import("./View/Members/SP/App"));
 
 export function showMembersPage(user: User, loginService: LoginService) {
-  const axios = Axios.create({
-    baseURL: "https://8p31a5pvr0.execute-api.us-east-1.amazonaws.com/dev/",
-    headers: { Authorization: user.idToken },
-    timeout: 10000,
-  });
-  const httpService: HttpService = new HttpServiceImpl(axios);
-
   ReactDOM.render(
     <React.StrictMode>
       <HashRouter>
-        <RouterWrapper
-          user={user}
-          httpService={httpService}
-          loginService={loginService}
-        />
+        <RouterWrapper user={user} loginService={loginService} />
       </HashRouter>
     </React.StrictMode>,
     document.getElementById("root")
@@ -49,35 +38,39 @@ export function showMembersPage(user: User, loginService: LoginService) {
 // historyを取得するため
 const RouterWrapper: React.FunctionComponent<{
   user: User;
-  httpService: HttpService;
   loginService: LoginService;
 }> = (props) => {
-  const history = useHistory();
-  return <BindBusinessLogicWrapper {...props} history={history} />;
+  return <BindBusinessLogicWrapper {...props} />;
 };
 
 // RxJSを起動してビジネスロジックとViewを接続する
 const BindBusinessLogicWrapper: React.FunctionComponent<{
   user: User;
-  httpService: HttpService;
   loginService: LoginService;
-  history: History;
 }> = (props) => {
-  const user = props.user;
+  const { user, loginService } = props;
+  const history = useHistory();
+
+  const axios = Axios.create({
+    baseURL: "https://8p31a5pvr0.execute-api.us-east-1.amazonaws.com/dev/",
+    headers: { Authorization: user.idToken },
+    timeout: 10000,
+  });
+  const httpService: HttpService = new HttpServiceImpl(axios);
   const storageService: StorageService = new StorageServiceImple();
   const currentTimeService: CurrentTimeService = currentTimeServiceImple;
 
   const [defaultState, stateObservable, eventObserver] = createHandler(
     storageService,
-    props.httpService,
+    httpService,
     currentTimeService,
-    props.history,
+    history,
     user.userID,
     user.nickname,
-    props.loginService
+    loginService
   );
 
-  props.httpService.onMessage().subscribe((_) =>
+  httpService.onMessage().subscribe((_) =>
     eventObserver.next({
       type: "do update tasks",
     })
@@ -88,7 +81,7 @@ const BindBusinessLogicWrapper: React.FunctionComponent<{
       defaultState={defaultState}
       observable={stateObservable}
       observer={eventObserver}
-      history={props.history}
+      history={history}
     />
   );
 };
