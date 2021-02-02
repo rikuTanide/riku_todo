@@ -76,7 +76,7 @@ export const Toast: React.FunctionComponent<{
     const taskID = toast.taskID;
     const to = toast.to;
     const redo = () => {
-      if (to == "continue")
+      if (to === "continue")
         props.observer.next({ type: "list / continue", taskID: taskID });
       else props.observer.next({ type: "list / complete", taskID: taskID });
     };
@@ -106,7 +106,7 @@ export const Toast: React.FunctionComponent<{
     const taskID = toast.taskID;
     const to = toast.to;
     const redo = () => {
-      if (to == "")
+      if (to === "")
         props.observer.next({ type: "list / restore", taskID: taskID });
       else props.observer.next({ type: "list / trash", taskID: taskID });
     };
