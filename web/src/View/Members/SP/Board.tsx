@@ -160,6 +160,7 @@ export const Continues: React.FunctionComponent<{
                 {t.title}
                 <EditIcon />
               </h2>
+              <time>{new Date(t.time).toLocaleString()}</time>
             </CardContent>
           </CardActionArea>
           <CardActions disableSpacing>
@@ -219,6 +220,7 @@ export const Completes: React.FunctionComponent<{
                 {t.title}
                 <EditIcon />
               </h2>
+              <time>{new Date(t.time).toLocaleString()}</time>
             </CardContent>
           </CardActionArea>
           <CardActions disableSpacing>
@@ -271,6 +273,7 @@ export const Trashs: React.FunctionComponent<{
                 {t.title}
                 <EditIcon />
               </h2>
+              <time>{new Date(t.time).toLocaleString()}</time>
             </CardContent>
           </CardActionArea>
           <CardActions disableSpacing>
