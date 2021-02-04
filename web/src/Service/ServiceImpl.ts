@@ -291,6 +291,6 @@ export class LoginServiceImple implements LoginService {
   }
 
   public goTop(): void {
-    window.location.href = "/";
+    window.location.href = window.location.pathname;
   }
 }
